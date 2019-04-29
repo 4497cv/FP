@@ -1,1 +1,3 @@
-# Villarreal_Rodriguez_Final_Project
+# Final Project
+Authors: César Villarreal @4497cv,
+         Luís Rodríguez   @LProtox,
