@@ -20,11 +20,6 @@
 #define SYSTEM_CLOCK (21000000U)
 #define SYS_NUM_ST 2
 
-typedef enum
-{
-	system_op1,
-	system_op2
-} system_state_t;
 
 typedef struct
 {
@@ -40,5 +35,10 @@ void system_menu(void);
 void system_play_classic(void);
 
 void system_guitar_tuner(void);
+
+void set_current_term_state(terminal_state_t terminal_st);
+
+boolean_t get_menu_select_flag();
+
 
 #endif /* SYSTEM_H_ */

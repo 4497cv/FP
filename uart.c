@@ -18,12 +18,24 @@ uart_mail_box_t g_mail_box_uart_5;
 
 void UART0_RX_TX_IRQHandler(void)
 {
+	boolean_t menu_select_flag;
+
 	/*First is verified if the serial port finished to transmit*/
 	UART_Wait_Transmit_Complete();
 	/*The info is saved in Data Register*/
 	g_mail_box_uart_0.mail_box = UART_Get_Receiver_Data_Buffer(UART_0);
 	/*There are new data*/
 	g_mail_box_uart_0.flag = TRUE;
+
+	if(ASCII_ONE == g_mail_box_uart_0.mail_box)
+	{
+		set_current_term_state(terminal_op1);
+	}
+	else if(ASCII_TWO == g_mail_box_uart_0.mail_box)
+	{
+		set_current_term_state(terminal_op2);
+	}
+
 }
 
 void UART_init(uart_channel_t uart_channel, uint32_t system_clk, baud_rate_t baud_rate)

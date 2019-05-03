@@ -12,7 +12,9 @@
 #include "system.h"
 #include "clockgating.h"
 
-static terminal_state_t current_term_st; //current terminal state
+static terminal_state_t prev_term_st;    //previous terminal state
+static terminal_state_t current_term_st; //current  terminal state
+static boolean_t menu_select_flag;
 
 static FSM_terminal_t FSM_terminal[TERM_NUM_ST]=
 {
@@ -30,11 +32,14 @@ static FSM_system_t FSM_system[SYS_NUM_ST]=
 
 void system_menu(void)
 {
-	current_term_st = terminal_start; //set initial terminal state (display menu)
-	FSM_terminal[current_term_st].fptr(); //invoke state's related function
-
-	current_term_st = FSM_terminal[current_term_st].next[0]; //set initial terminal state (display menu)
-	FSM_terminal[current_term_st].fptr(); //invoke state's related function
+	if(prev_term_st != current_term_st)
+	{
+		FSM_terminal[current_term_st].fptr(); //invoke state's related function
+		prev_term_st = current_term_st;
+	}
+	//UART_empty_mailbox(UART_0);
+//	current_term_st = FSM_terminal[current_term_st].next[0]; //set initial terminal state (display menu)
+//	FSM_terminal[current_term_st].fptr(); //invoke state's related function
 
 }
 
@@ -59,10 +64,36 @@ void system_init()
 	FTM0_clockgating();
 	FTM_config();
 
-	/**Enables and sets a particular interrupt and its priority*/
-	NVIC_enable_interrupt_and_priotity(FTM3_IRQ, PRIORITY_10);
+	/* UART config */
+	/**Configures UART 0 to transmit/receive at 11520 bauds with a 21 MHz of clock core*/
+	UART_init (UART_0, SYSTEM_CLOCK, BD_115200);
+	/**Enables the UART 0 interrupt*/
+	UART_interrupt_enable(UART_0);
 
+	/**Sets the threshold for interrupts, if the interrupt has higher priority constant that the BASEPRI, the interrupt will not be attended*/
+	NVIC_set_basepri_threshold(PRIORITY_10);
+	NVIC_enable_interrupt_and_priotity(UART0_IRQ, PRIORITY_2);
+	/**Enables and sets a particular interrupt and its priority*/
+	NVIC_enable_interrupt_and_priotity(FTM3_IRQ, PRIORITY_5);
+	NVIC_global_enable_interrupts;
+
+	FSM_terminal[terminal_start].fptr(); //invoke state's related function
+
+	current_term_st = terminal_menu; //set initial terminal state (display menu)
+	FSM_terminal[terminal_menu].fptr(); //invoke state's related function
+
+	prev_term_st = terminal_start;
+	menu_select_flag = TRUE;
 }
 
+boolean_t get_menu_select_flag()
+{
+	return menu_select_flag;
+}
+
+void set_current_term_state(terminal_state_t terminal_st)
+{
+	current_term_st = terminal_st;
+}
 
 

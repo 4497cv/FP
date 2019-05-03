@@ -13,14 +13,6 @@
 
 #define TERM_NUM_ST 4
 
-typedef enum
-{
-	terminal_start,
-	terminal_menu,
-	terminal_op1,
-	terminal_op2
-} terminal_state_t;
-
 typedef struct
 {
 	void(*fptr)(void);

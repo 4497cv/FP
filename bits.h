@@ -47,6 +47,20 @@ typedef enum
 	bit_31  /*!< Bit 31 */
 } BitsType;
 
+typedef enum
+{
+	terminal_start,
+	terminal_menu,
+	terminal_op1,
+	terminal_op2
+} terminal_state_t;
+
+typedef enum
+{
+	system_op1,
+	system_op2
+} system_state_t;
+
 typedef enum{FALSE, TRUE} boolean_t;
 
 /*! This definition is as a general definitions to bits turn-on or turn-off any bit*/
