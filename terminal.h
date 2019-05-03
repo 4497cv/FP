@@ -11,6 +11,8 @@
 #include "bits.h"
 #include "uart.h"
 
+#define TERM_NUM_ST 4
+
 typedef enum
 {
 	terminal_start,

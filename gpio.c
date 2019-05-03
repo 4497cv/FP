@@ -1,5 +1,5 @@
 /**
-	\file
+	\file 
 	\brief
 		This is the source file for the GPIO device driver for Kinetis K64.
 		It contains all the implementation for configuration functions and runtime functions.
@@ -9,6 +9,7 @@
 	\todo
 	    Interrupts are not implemented in this API implementation.
  */
+
 #include "MK64F12.h"
 #include "GPIO.h"
 

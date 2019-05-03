@@ -10,9 +10,15 @@
 #ifndef SYSTEM_H_
 #define SYSTEM_H_
 
+#include "MK64F12.h"
 #include "terminal.h"
 #include "uart.h"
+#include "nvic.h"
+#include "gpio.h"
+#include "flextimer.h"
 
+#define SYSTEM_CLOCK (21000000U)
+#define SYS_NUM_ST 2
 
 typedef enum
 {
@@ -26,6 +32,8 @@ typedef struct
 	system_state_t next[4];
 } FSM_system_t;
 
+
+void system_init(void);
 
 void system_menu(void);
 
