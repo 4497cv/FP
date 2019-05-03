@@ -15,6 +15,12 @@
 
 typedef struct
 {
+	int8_t *setup_txt;
+	terminal_config_state_t next[10];
+} FSM_terminal_config_t;
+
+typedef struct
+{
 	void(*fptr)(void);
 	terminal_state_t next[4];
 } FSM_terminal_t;
@@ -23,6 +29,7 @@ typedef enum
 {
 	ASCII_ENTER = 13,
 	ASCII_ESC = 27,
+	ASCII_SPACE = 29,
 	/**/
 	ASCII_LETTER_A = 65,
 	ASCII_LETTER_B = 66,

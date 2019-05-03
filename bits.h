@@ -57,9 +57,26 @@ typedef enum
 
 typedef enum
 {
+	terminal_S0,
+	terminal_S1,
+	terminal_S2,
+	terminal_S3,
+	terminal_S4,
+	terminal_S5,
+	terminal_S6,
+	terminal_S7,
+	terminal_S8,
+	terminal_S9,
+} terminal_config_state_t;
+
+typedef enum
+{
 	system_op1,
 	system_op2
 } system_state_t;
+
+/** This enumeration defines the UART's ports to be used **/
+typedef enum {UART_0,UART_1,UART_2,UART_3,UART_4,UART_5} uart_channel_t;
 
 typedef enum{FALSE, TRUE} boolean_t;
 

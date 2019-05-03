@@ -23,9 +23,6 @@ typedef struct{
 	uint8_t mail_box; /** it contains the received data*/
 } uart_mail_box_t;
 
-/** This enumeration defines the UART's ports to be used **/
-typedef enum {UART_0,UART_1,UART_2,UART_3,UART_4,UART_5} uart_channel_t;
-
 /** This enumeration defines some common transmission baud rates **/
 typedef enum {BD_4800 = 4800,BD_9600 = 9600,BD_5600 = 5600, BD_115200 = 115200} baud_rate_t;
 

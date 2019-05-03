@@ -11,9 +11,10 @@ int main(void)
 {
 	system_init();
 
+
 	while(1)
 	{
-		system_menu();
+
 	}
 
 	return 0;

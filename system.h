@@ -36,9 +36,10 @@ void system_play_classic(void);
 
 void system_guitar_tuner(void);
 
-void set_current_term_state(terminal_state_t terminal_st);
+boolean_t get_menu_select_flag(uint8_t mailbox_value);
 
-boolean_t get_menu_select_flag();
+boolean_t valid_menu_select(uint8_t mailbox_value);
 
+void system_fsm_handler(void);
 
 #endif /* SYSTEM_H_ */

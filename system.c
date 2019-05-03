@@ -14,7 +14,9 @@
 
 static terminal_state_t prev_term_st;    //previous terminal state
 static terminal_state_t current_term_st; //current  terminal state
-static boolean_t menu_select_flag;
+static system_state_t current_system_st;
+
+static uint8_t keytemp;
 
 static FSM_terminal_t FSM_terminal[TERM_NUM_ST]=
 {
@@ -32,11 +34,45 @@ static FSM_system_t FSM_system[SYS_NUM_ST]=
 
 void system_menu(void)
 {
-	if(prev_term_st != current_term_st)
+	boolean_t mailbox_flag;
+	boolean_t menu_select_flag;
+	uint8_t mailbox_value;
+
+	mailbox_flag = UART_get_mailbox_flag(UART_0);
+
+	if(mailbox_flag)
 	{
-		FSM_terminal[current_term_st].fptr(); //invoke state's related function
-		prev_term_st = current_term_st;
+		mailbox_value = UART_get_mailbox(UART_0); //get mailbox value
+		menu_select_flag = valid_menu_select(mailbox_value);
+
+		if(menu_select_flag)
+		{
+			switch(keytemp)
+			{
+				case ASCII_ONE:
+					current_term_st = terminal_op1;
+					current_system_st = system_op1;
+				break;
+				case ASCII_TWO:
+					current_term_st = terminal_op2;
+					current_system_st = system_op2;
+				case ASCII_ESC:
+					current_term_st = terminal_menu;
+				break;
+				default:
+				break;
+			}
+
+			system_fsm_handler();
+		}
+		else
+		{
+
+		}
+
 	}
+
+	UART_empty_mailbox(UART_0);
 	//UART_empty_mailbox(UART_0);
 //	current_term_st = FSM_terminal[current_term_st].next[0]; //set initial terminal state (display menu)
 //	FSM_terminal[current_term_st].fptr(); //invoke state's related function
@@ -77,23 +113,61 @@ void system_init()
 	NVIC_enable_interrupt_and_priotity(FTM3_IRQ, PRIORITY_5);
 	NVIC_global_enable_interrupts;
 
-	FSM_terminal[terminal_start].fptr(); //invoke state's related function
+	prev_term_st = terminal_start;
+	FSM_terminal[prev_term_st].fptr(); //invoke state's related function
 
 	current_term_st = terminal_menu; //set initial terminal state (display menu)
-	FSM_terminal[terminal_menu].fptr(); //invoke state's related function
-
-	prev_term_st = terminal_start;
-	menu_select_flag = TRUE;
 }
 
-boolean_t get_menu_select_flag()
+boolean_t valid_menu_select(uint8_t mailbox_value)
 {
-	return menu_select_flag;
+	boolean_t ver_flag;
+
+	/** Verify if the keypressed is a numeric option for the switch case **/
+	if((ASCII_ONE <= mailbox_value) && (ASCII_TWO>= mailbox_value)) //CHANGED
+	{
+		keytemp = mailbox_value;
+		ver_flag = FALSE;
+		/** Display pressed key on screen **/
+		UART_put_char(UART_0, mailbox_value);
+	}
+	else if(ASCII_ENTER == mailbox_value)
+	{
+		ver_flag = TRUE;
+	}
+	else if(ASCII_ESC == mailbox_value)
+	{
+		ver_flag = FALSE;
+		keytemp = mailbox_value;
+	}
+	else
+	{
+		UART_empty_mailbox(UART_0);
+		ver_flag = FALSE;
+	}
+
+	return ver_flag;
 }
 
-void set_current_term_state(terminal_state_t terminal_st)
+void system_play_classic()
 {
-	current_term_st = terminal_st;
 }
 
+void system_guitar_tuner()
+{
 
+}
+
+void system_fsm_handler()
+{
+	if(prev_term_st != current_term_st)
+	{
+		FSM_terminal[current_term_st].fptr(); //invoke state's related function
+		//FSM_system[current_system_st].fptr();
+		prev_term_st = current_term_st;
+	}
+	else
+	{
+
+	}
+}

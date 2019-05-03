@@ -27,15 +27,7 @@ void UART0_RX_TX_IRQHandler(void)
 	/*There are new data*/
 	g_mail_box_uart_0.flag = TRUE;
 
-	if(ASCII_ONE == g_mail_box_uart_0.mail_box)
-	{
-		set_current_term_state(terminal_op1);
-	}
-	else if(ASCII_TWO == g_mail_box_uart_0.mail_box)
-	{
-		set_current_term_state(terminal_op2);
-	}
-
+	system_menu();
 }
 
 void UART_init(uart_channel_t uart_channel, uint32_t system_clk, baud_rate_t baud_rate)
@@ -281,8 +273,7 @@ void UART_put_string(uart_channel_t uart_channel, int8_t* string)
 	}
 }
 
-
-static void UART_Wait_Transmit_Complete(void)
+void UART_Wait_Transmit_Complete(void)
 {
 	boolean_t ver_transmission;
 
@@ -294,7 +285,7 @@ static void UART_Wait_Transmit_Complete(void)
 	while(FALSE == ver_transmission);
 }
 
-static void UART_Set_Receiver_Data_Buffer(uart_channel_t uart_channel, uint8_t character)
+void UART_Set_Receiver_Data_Buffer(uart_channel_t uart_channel, uint8_t character)
 {
 	switch(uart_channel)
 	{
@@ -321,7 +312,7 @@ static void UART_Set_Receiver_Data_Buffer(uart_channel_t uart_channel, uint8_t c
 	}
 }
 
-static uint8_t UART_Get_Receiver_Data_Buffer(uart_channel_t uart_channel)
+uint8_t UART_Get_Receiver_Data_Buffer(uart_channel_t uart_channel)
 {
 	uint8_t data_buffer;
 
@@ -352,7 +343,7 @@ static uint8_t UART_Get_Receiver_Data_Buffer(uart_channel_t uart_channel)
 	return data_buffer;
 }
 
-static void UART_Data_Transmit(uart_channel_t uart_channel, int8_t* data_string)
+void UART_Data_Transmit(uart_channel_t uart_channel, int8_t* data_string)
 {
 	while(*data_string)
 	{
