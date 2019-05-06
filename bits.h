@@ -71,8 +71,9 @@ typedef enum
 
 typedef enum
 {
-	system_op1,
-	system_op2
+	system_ClassicMode,
+	system_GuitarTuner,
+	system_PlayerBoard,
 } system_state_t;
 
 typedef enum

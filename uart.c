@@ -24,8 +24,6 @@ void UART0_RX_TX_IRQHandler(void)
 	g_mail_box_uart_0.mail_box = UART_Get_Receiver_Data_Buffer(UART_0);
 	/*There are new data*/
 	g_mail_box_uart_0.flag = TRUE;
-
-	system_menu();
 }
 
 void UART_init(uart_channel_t uart_channel, uint32_t system_clk, baud_rate_t baud_rate)

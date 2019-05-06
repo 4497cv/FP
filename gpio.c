@@ -75,6 +75,18 @@ void PORTB_IRQHandler(void)
 }
 void PORTC_IRQHandler(void)
 {
+	uint8_t pin_select = GPIO_read_pin(GPIO_C, bit_5);
+	uint8_t pin_start = GPIO_read_pin(GPIO_C, bit_7);
+
+	if(TRUE == pin_select)
+	{
+		system_select_next_op();
+	}
+	else if(TRUE == pin_start)
+	{
+		system_set_start();
+	}
+
 	/*Set flag that it was pressed*/
 	g_intr_status_flag.flag_port_c = TRUE;
 	/*Callback if its used*/
@@ -84,6 +96,8 @@ void PORTC_IRQHandler(void)
 	}
 
 	GPIO_clear_interrupt(GPIO_C);
+
+	system_menu();
 }
 void PORTD_IRQHandler(void)
 {

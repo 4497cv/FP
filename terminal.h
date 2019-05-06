@@ -12,7 +12,8 @@
 #define TERM_H_
 
 #include "bits.h"
-#include "uart.h"
+#include "spi.h"
+
 
 #define TERM_NUM_ST     4
 
@@ -22,11 +23,6 @@
 #define FSM_OP1_SIZE    7
 #define FSM_OP2_SIZE    7
 #define FSM_TOTAL_STATES  10
-typedef struct
-{
-	int8_t *setup_txt; //Text string
-	terminal_config_state_t next[FSM_TOTAL_STATES]; //FSM terminal states
-} FSM_terminal_config_t;
 
 typedef struct
 {

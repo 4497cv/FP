@@ -12,13 +12,13 @@ double highest_val = 0;
 
 Keymap_t key_map[KEYMAP_SIZE]=
 {
- {'C',   C1_1, C1_2, C1_3, C1_4},
- {'D',   D1_1, D1_2, D1_3, D1_4},
- {'E',   E1_1, E1_2, E1_3, E1_4},
- {'F',   F1_1, F1_2, F1_3, F1_4},
- {'G',   G1_1, G1_2, G1_3, G1_4},
- {'A',   A1_1, A1_2, A1_3, A1_4},
- {'B',   B1_1, B1_2, B1_3, B1_4}
+ {'C',   C1_1, C1_2, C1_3, C1_4}, /*  DO  */
+ {'D',   D1_1, D1_2, D1_3, D1_4}, /*  RE  */
+ {'E',   E1_1, E1_2, E1_3, E1_4}, /*  MI  */
+ {'F',   F1_1, F1_2, F1_3, F1_4}, /*  FA  */
+ {'G',   G1_1, G1_2, G1_3, G1_4}, /*  SOL */
+ {'A',   A1_1, A1_2, A1_3, A1_4}, /*  LA  */
+ {'B',   B1_1, B1_2, B1_3, B1_4}  /*  SI  */
 };
 
 void FREQ_READ()
@@ -73,12 +73,6 @@ void FREQ_READ()
 	}
 
 	FREQ_show_current_voltage(cadena);
-
-//	if(cadena[2] == key_map[0].milli && cadena[3] == key_map[0].micro && cadena[4] == key_map[0].nano);
-//	{
-//		printf("DO\n");
-//	}
-
 }
 
 uint8_t FREQ_get_notekey(uint8_t voltage_string[STRING_MAX])

@@ -11,10 +11,11 @@
 int main(void)
 {
 	system_init();
+	terminal_menu_start();
 
 	while(1)
 	{
-		FREQ_READ();
+
 	}
 
 	return 0;

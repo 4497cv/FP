@@ -16,6 +16,8 @@
 #include "nvic.h"
 #include "gpio.h"
 #include "flextimer.h"
+#include "lcd_nokia.h"
+#include "spi.h"
 
 #define SYSTEM_CLOCK (21000000U)
 #define SYS_NUM_ST 2
