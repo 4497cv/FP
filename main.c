@@ -6,15 +6,15 @@
  */
 
 #include "system.h"
+#include "frequency_decoder.h"
 
 int main(void)
 {
 	system_init();
 
-
 	while(1)
 	{
-
+		FREQ_READ();
 	}
 
 	return 0;

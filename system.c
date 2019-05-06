@@ -106,6 +106,10 @@ void system_init()
 	/**Enables the UART 0 interrupt*/
 	UART_interrupt_enable(UART_0);
 
+
+	/* ADC configuration */
+	ADC_init();
+
 	/**Sets the threshold for interrupts, if the interrupt has higher priority constant that the BASEPRI, the interrupt will not be attended*/
 	NVIC_set_basepri_threshold(PRIORITY_10);
 	NVIC_enable_interrupt_and_priotity(UART0_IRQ, PRIORITY_2);

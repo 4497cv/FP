@@ -1,9 +1,12 @@
 /*
- * uart_tera.h
- *
- *  Created on: Apr 10, 2019
- *      Author: LuisFernando
- */
+	\file 	  terminal.h
+	\brief	  This is the header file that contains the functions that display information by UART.
+
+	\authors: César Villarreal Hernández, ie707560
+	          José Luis Rodríguez Gutiérrez, ie705694
+
+	\date	  03/05/2019
+*/
 
 #ifndef TERM_H_
 #define TERM_H_
@@ -11,55 +14,25 @@
 #include "bits.h"
 #include "uart.h"
 
-#define TERM_NUM_ST 4
+#define TERM_NUM_ST     4
 
+#define INDEX_INIT 		0
+#define FSM_START_SIZE  6
+#define FSM_SELECT_SIZE 9
+#define FSM_OP1_SIZE    7
+#define FSM_OP2_SIZE    7
+#define FSM_TOTAL_STATES  10
 typedef struct
 {
-	int8_t *setup_txt;
-	terminal_config_state_t next[10];
+	int8_t *setup_txt; //Text string
+	terminal_config_state_t next[FSM_TOTAL_STATES]; //FSM terminal states
 } FSM_terminal_config_t;
 
 typedef struct
 {
-	void(*fptr)(void);
-	terminal_state_t next[4];
+	void(*fptr)(void);	//Text string
+	terminal_state_t next[TERM_NUM_ST]; //FSM terminal states
 } FSM_terminal_t;
-
-typedef enum
-{
-	ASCII_ENTER = 13,
-	ASCII_ESC = 27,
-	ASCII_SPACE = 29,
-	/**/
-	ASCII_LETTER_A = 65,
-	ASCII_LETTER_B = 66,
-	ASCII_LETTER_C = 67,
-	ASCII_LETTER_D = 68,
-	ASCII_LETTER_E = 69,
-	ASCII_LETTER_F = 70,
-	ASCII_LETTER_a = 97,
-	ASCII_LETTER_b = 98,
-	ASCII_LETTER_c = 99,
-	ASCII_LETTER_d = 100,
-	ASCII_LETTER_e = 101,
-	ASCII_LETTER_f = 102,
-	/**/
-	ASCII_ONE = 49,
-	ASCII_TWO = 50,
-	ASCII_THREE = 51,
-	ASCII_FOUR = 52,
-	ASCII_FIVE = 53,
-	ASCII_SIX = 54,
-	ASCII_SEVEN = 55,
-	ASCII_EIGHT = 56,
-	ASCII_NINE = 57,
-	ASCII_ZERO = 48,
-	/**/
-	ASCII_TIME_FORM = 58,
-	ASCII_DATE_FORM = 47,
-	ASCII_STOP = 59,
-	ASCII_DOT = 250
-}ASCII_type;
 
 void terminal_menu_start(void);
 

@@ -18,8 +18,6 @@ uart_mail_box_t g_mail_box_uart_5;
 
 void UART0_RX_TX_IRQHandler(void)
 {
-	boolean_t menu_select_flag;
-
 	/*First is verified if the serial port finished to transmit*/
 	UART_Wait_Transmit_Complete();
 	/*The info is saved in Data Register*/

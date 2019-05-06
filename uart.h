@@ -70,14 +70,14 @@ void UART_put_string(uart_channel_t uart_channel, int8_t* string);
  	 \param[in]  void
  	 \return     static void
  */
-static void UART_Wait_Transmit_Complete(void);
+void UART_Wait_Transmit_Complete(void);
 
 /*!
  	 \brief			 It sets the receiver data buffer with a given character.
  	 \param[in]  void
  	 \return     static void
  */
-static void UART_Set_Receiver_Data_Buffer(uart_channel_t uart_channel, uint8_t character);
+void UART_Set_Receiver_Data_Buffer(uart_channel_t uart_channel, uint8_t character);
 
 /*!
  	 \brief		 It gets the current receiver data buffer.
@@ -85,14 +85,14 @@ static void UART_Set_Receiver_Data_Buffer(uart_channel_t uart_channel, uint8_t c
  	 \return     static uint8_t
  */
 
-static uint8_t UART_Get_Receiver_Data_Buffer(uart_channel_t uart_channel);
+uint8_t UART_Get_Receiver_Data_Buffer(uart_channel_t uart_channel);
 
 /*!
  	 \brief		 It transmits the data to a specific UART channel.
  	 \param[in]  void
  	 \return     static void
  */
-static void UART_Data_Transmit(uart_channel_t uart_channel, int8_t* data_string);
+void UART_Data_Transmit(uart_channel_t uart_channel, int8_t* data_string);
 
 /*!
  	 \brief		 It gets the current mailbox value.
