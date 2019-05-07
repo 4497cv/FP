@@ -114,24 +114,24 @@ void PIT_delay(PIT_timer_t pit_timer,My_float_pit_t system_clock , My_float_pit_
 	{
 	case PIT_0:
 		PIT->CHANNEL[PIT_0].LDVAL = LDVAL;
-		//PIT_enable_interrupt(PIT_0);
+		PIT_enable_interrupt(PIT_0);
 		break;
 	case PIT_1:
 		PIT->CHANNEL[PIT_1].LDVAL = LDVAL;
-		//PIT_enable_interrupt(PIT_1);
+		PIT_enable_interrupt(PIT_1);
 		break;
 	case PIT_2:
 		PIT->CHANNEL[PIT_2].LDVAL = LDVAL;
-		//PIT_enable_interrupt(PIT_2);
+		PIT_enable_interrupt(PIT_2);
 		break;
 	case PIT_3:
 		PIT->CHANNEL[PIT_3].LDVAL = LDVAL;
-		//PIT_enable_interrupt(PIT_3);
+		PIT_enable_interrupt(PIT_3);
 		break;
 
 	default:
 		PIT->CHANNEL[0].LDVAL = LDVAL;
-		//PIT_enable_interrupt(PIT_0);
+		PIT_enable_interrupt(PIT_0);
 		break;
 	}
 

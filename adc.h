@@ -14,8 +14,8 @@
 #define adc_H_
 
 #include "stdint.h"
-#include "GPIO.h"
-#include "Bits.h"
+#include "gpio.h"
+#include "bits.h"
 #include "MK64F12.h"
 
 #define VOLT 3.3F

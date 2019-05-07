@@ -31,8 +31,10 @@
 
 
 
-
-void FTM0_output_compare_config();
+/*
+ * Funct used for the pseudo random number
+ */
+void FTM0_output_compare_config(void);
 
 
 #endif /* FLEXTIMER_H_ */

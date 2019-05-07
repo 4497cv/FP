@@ -37,11 +37,14 @@
 #include "k64_system.h"
 #include "nvic.h"
 #include "Flextimer.h"
+#include "pit.h"
 #include "simon_says.h"
+#include "buzzer.h"
 /* TODO: insert other include files here. */
 
 /* TODO: insert other definitions and declarations here. */
 /* TODO: insert other definitions and declarations here. */
+
 /*
  * @brief   Application entry point.
  */
@@ -51,6 +54,8 @@ int main(void)
 
 	FTM0_output_compare_config();
 
+	buzzer_config();
+
 /*NVIC config*/
 	/**Sets the threshold for interrupts, if the interrupt has higher priority constant that the BASEPRI, the interrupt will not be attended*/
 	NVIC_set_basepri_threshold(PRIORITY_10);
@@ -58,10 +63,16 @@ int main(void)
 	NVIC_enable_interrupt_and_priotity(PORTA_IRQ,PRIORITY_5);
 	/**Enables and sets a particular interrupt and its priority*/
 	NVIC_enable_interrupt_and_priotity(PORTC_IRQ,PRIORITY_5);
+	/*Activating the ISR for the PIT and set the priority*/
+	NVIC_enable_interrupt_and_priotity(PIT_CH0_IRQ, PRIORITY_6);
 
 	NVIC_global_enable_interrupts;
 
+/*Callbacks*/
+	/** Callbacks for gpio*/
 	GPIO_callback_init(GPIO_A,get_rand_number);
+	/** Callbacks for PIT */
+	PIT_callback_init(PIT_0,buzzer_toogle);
 
 	for(;;)
 	{
