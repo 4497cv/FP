@@ -11,7 +11,6 @@
 int main(void)
 {
 	system_init();
-	terminal_menu_start();
 
 	while(1)
 	{

@@ -17,49 +17,53 @@ static terminal_state_t current_term_st; //current  terminal state
 static system_state_t current_system_select;
 static boolean_t system_start;
 
-static uint8_t keytemp;
-
 static FSM_terminal_t FSM_terminal[TERM_NUM_ST]=
 {
-	{terminal_menu_start,     {terminal_menu,    terminal_op1,     terminal_op2, terminal_start}},
-	{terminal_menu_select,    {terminal_op1,     terminal_op2,   terminal_start,  terminal_menu}},
-	{terminal_menu_op1,       {terminal_op2,   terminal_start,    terminal_menu,   terminal_op1}},
-	{terminal_menu_op2,       {terminal_start,  terminal_menu,     terminal_op1,   terminal_op2}}
+	{terminal_menu_start,     {terminal_menu,   terminal_op1,     terminal_op2,   terminal_start}},
+	{terminal_menu_select0,   {terminal_op1,    terminal_op2,     terminal_op3,   terminal_op4}},
+	{terminal_menu_op1,       {terminal_op2,    terminal_op3,     terminal_op4,   terminal_op1}},
+	{terminal_menu_op2,       {terminal_op3,    terminal_op4,     terminal_op1,   terminal_op2}},
+	{terminal_menu_op3,       {terminal_op4,    terminal_op1,     terminal_op2,   terminal_op3}},
+	{terminal_menu_op4,       {terminal_op1,    terminal_op2,     terminal_op3,   terminal_op4}}
 };
 
 static FSM_system_t FSM_system[SYS_NUM_ST]=
 {
-	{system_play_classic,    {system_GuitarTuner,	 system_PlayerBoard,  system_ClassicMode}},
-	{system_guitar_tuner,    {system_PlayerBoard,    system_ClassicMode,  system_GuitarTuner}},
-	{system_player_board,    {system_ClassicMode,    system_GuitarTuner,  system_PlayerBoard}}
+	{system_menu,			 {system_ClassicMode,  system_GuitarTuner,      system_PlayerBoard,   system_ClassicMode}},
+	{system_play_classic,    {system_SimonMode,    system_GuitarTuner,      system_PlayerBoard,   system_ClassicMode}},
+	{system_play_SimonMode,  {system_GuitarTuner,  system_PlayerBoard,      system_ClassicMode,   system_SimonMode}},
+	{system_guitar_tuner,    {system_PlayerBoard,  system_PlayerBoard,      system_ClassicMode,   system_GuitarTuner}},
+	{system_player_board,    {system_ClassicMode,  system_SimonMode,        system_GuitarTuner,   system_PlayerBoard}}
 };
 
 void system_menu(void)
 {
-	if((TRUE == system_start) && (terminal_start == current_term_st))
+
+	if(TRUE == system_start)
 	{
-		current_term_st = FSM_terminal[current_term_st].next[0]; //show system's menu
-		FSM_terminal[current_term_st].fptr(); //invoke state's related function
-	}
-	else if((TRUE == system_start) && (system_ClassicMode == current_system_select))
-	{
-		FSM_terminal[terminal_op1].fptr(); //invoke state's related function
-		FSM_system[system_ClassicMode].fptr(); //invoke state's related function
-	}
-	else if((TRUE == system_start) && (system_GuitarTuner == current_system_select))
-	{
-		FSM_terminal[terminal_op2].fptr(); //invoke state's related function
-		FSM_system[system_GuitarTuner].fptr(); //invoke state's related function
+		switch(current_system_select)
+		{
+			case system_ClassicMode:
+				current_term_st = terminal_op1;
+			break;
+			case system_SimonMode:
+				current_term_st = terminal_op2;
+			break;
+			case system_GuitarTuner:
+				current_term_st = terminal_op3;
+			break;
+			case system_PlayerBoard:
+				current_term_st = terminal_op4;
+			break;
+			default:
+			break;
+		}
 		system_start = FALSE;
-	}
-	else if((TRUE == system_start) && (system_PlayerBoard == current_system_select))
-	{
-		//FSM_terminal[terminal_menu_op3].fptr(); //invoke state's related function
-		FSM_system[system_PlayerBoard].fptr(); //invoke state's related function
+		FSM_terminal[current_term_st].fptr();
 	}
 	else
 	{
-		system_start = FALSE;
+		system_dynamic_select_handler();
 	}
 }
 
@@ -70,9 +74,38 @@ void system_play_classic()
 
 }
 
+void system_play_SimonMode()
+{
+
+}
+
 void system_guitar_tuner()
 {
 
+}
+
+void system_dynamic_select_handler(void)
+{
+	switch(current_system_select)
+	{
+		case system_Menu:
+			terminal_menu_select0();
+		break;
+		case system_ClassicMode:
+			terminal_menu_select1();
+		break;
+		case system_SimonMode:
+			terminal_menu_select2();
+		break;
+		case system_GuitarTuner:
+			terminal_menu_select3();
+		break;
+		case system_PlayerBoard:
+			terminal_menu_select4();
+		break;
+		default:
+		break;
+	}
 }
 
 void system_player_board()
@@ -123,14 +156,14 @@ void system_init()
 	LCD_nokia_init(); /*! Configuration function for the LCD */
 
 	/* Set push button start pin configuration */
-	GPIO_pin_control_register(GPIO_C, bit_5, &button_config);
+	GPIO_pin_control_register(GPIO_C, bit_3, &button_config);
 	/* drive push button start pin logic */
-	GPIO_data_direction_pin(GPIO_C, GPIO_INPUT, bit_5);
+	GPIO_data_direction_pin(GPIO_C, GPIO_INPUT, bit_3);
 
 	/* Set push button select pin configuration */
-	GPIO_pin_control_register(GPIO_C, bit_7, &button_config);
+	GPIO_pin_control_register(GPIO_C, bit_2, &button_config);
 	/* drive push button select pin logic */
-	GPIO_data_direction_pin(GPIO_C, GPIO_INPUT, bit_7);
+	GPIO_data_direction_pin(GPIO_C, GPIO_INPUT, bit_2);
 
 	/* ADC configuration */
 	ADC_init();
@@ -146,7 +179,7 @@ void system_init()
 	FSM_terminal[current_term_st].fptr(); //invoke state's related function
 
 	current_term_st = FSM_terminal[current_term_st].next[0]; //set initial terminal state (display menu)
-	current_system_st = system_ClassicMode; //set state pointer to classic mode
+	current_system_select = system_Menu; //set state pointer to classic mode
 }
 
 

@@ -1,9 +1,4 @@
-/*
- * LCD_nokia_images.h
- *
- *  Created on: 25/09/2018
- *      Author: jlpe
- */
+
 
 #ifndef LCD_NOKIA_IMAGES_H_
 #define LCD_NOKIA_IMAGES_H_
@@ -22,6 +17,8 @@ typedef struct
 } FSM_LCD_t;
 
 void LCD_terminal_startup(void);
+
+void LCD_set_frame(void);
 
 #endif /* LCD_NOKIA_IMAGES_H_ */
 

@@ -52,7 +52,9 @@ typedef enum
 	terminal_start,
 	terminal_menu,
 	terminal_op1,
-	terminal_op2
+	terminal_op2,
+	terminal_op3,
+	terminal_op4
 } terminal_state_t;
 
 typedef enum
@@ -71,7 +73,9 @@ typedef enum
 
 typedef enum
 {
+	system_Menu,
 	system_ClassicMode,
+	system_SimonMode,
 	system_GuitarTuner,
 	system_PlayerBoard,
 } system_state_t;

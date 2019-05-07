@@ -13,10 +13,11 @@
 
 #include "bits.h"
 #include "spi.h"
+#include "LCD_nokia_images.h"
 
 
-#define TERM_NUM_ST     4
-
+#define TERM_NUM_ST     6
+#define SCREEN_LIMIT    84
 #define INDEX_INIT 		0
 #define FSM_START_SIZE  6
 #define FSM_SELECT_SIZE 9
@@ -32,10 +33,15 @@ typedef struct
 
 void terminal_menu_start(void);
 
-void terminal_menu_select(void);
+void terminal_menu_select0(void);
+void terminal_menu_select1(void);
+void terminal_menu_select2(void);
+void terminal_menu_select3(void);
+void terminal_menu_select4(void);
 
 void terminal_menu_op1(void);
-
 void terminal_menu_op2(void);
+void terminal_menu_op3(void);
+void terminal_menu_op4(void);
 
 #endif /* UART_TERM_H_ */

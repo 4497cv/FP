@@ -75,8 +75,8 @@ void PORTB_IRQHandler(void)
 }
 void PORTC_IRQHandler(void)
 {
-	uint8_t pin_select = GPIO_read_pin(GPIO_C, bit_5);
-	uint8_t pin_start = GPIO_read_pin(GPIO_C, bit_7);
+	uint8_t pin_select = GPIO_read_pin(GPIO_C, bit_2);
+	uint8_t pin_start = GPIO_read_pin(GPIO_C, bit_3);
 
 	if(TRUE == pin_select)
 	{
