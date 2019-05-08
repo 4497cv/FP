@@ -60,6 +60,9 @@ void PIT1_IRQHandler()
 	/*Change status of the flag*/
 	pit_intr_status_flag.flag_PIT_1 = TRUE;
 
+	/*buzzer activation*/
+	buzzer_toogle();
+
 	/*CALLBACK*/
 	if(PIT_1_callback)
 	{
@@ -128,7 +131,6 @@ void PIT_delay(PIT_timer_t pit_timer,My_float_pit_t system_clock , My_float_pit_
 		PIT->CHANNEL[PIT_3].LDVAL = LDVAL;
 		//PIT_enable_interrupt(PIT_3);
 		break;
-
 	default:
 		PIT->CHANNEL[0].LDVAL = LDVAL;
 		//PIT_enable_interrupt(PIT_0);

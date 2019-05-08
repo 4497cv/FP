@@ -10,7 +10,6 @@
 #include "gpio.h"
 
 #define SYSTEM_CLOCK (21000000U)
-#define DELAY (1.0F)
 
 
 #define MASK_PIT_DISABLE 0x00000000

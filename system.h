@@ -12,11 +12,12 @@
 
 #include "MK64F12.h"
 #include "terminal.h"
-#include "uart.h"
 #include "nvic.h"
 #include "gpio.h"
 #include "lcd_nokia.h"
 #include "spi.h"
+#include "buzzer.h"
+#include "FlexTimer.h"
 
 #define SYSTEM_CLOCK (21000000U)
 #define SYS_NUM_ST 6

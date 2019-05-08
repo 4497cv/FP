@@ -63,6 +63,10 @@ void system_menu(void)
 			default:
 			break;
 		}
+
+		FSM_terminal[current_term_st].fptr();
+		FSM_system[current_system_select].fptr();
+
 		system_start = FALSE;
 		toggle_start_flag();
 		toggle_select_flag();
@@ -73,12 +77,12 @@ void system_menu(void)
 		system_dynamic_select_handler();
 	}
 
-	if(prev_term_st != current_term_st)
-	{
-		FSM_terminal[current_term_st].fptr();
-		//FSM_system[current_system_select].fptr();
-		prev_term_st = current_term_st;
-	}
+//	if(prev_term_st != current_term_st)
+//	{
+//		FSM_terminal[current_term_st].fptr();
+//		FSM_system[current_system_select].fptr();
+//		prev_term_st = current_term_st;
+//	}
 }
 
 
@@ -90,6 +94,8 @@ void system_play_classic()
 
 void system_play_SimonMode()
 {
+
+	get_rand_number();
 
 }
 
@@ -138,6 +144,7 @@ void system_init()
 	gpio_pin_control_register_t uart_config = GPIO_MUX3;
 	gpio_pin_control_register_t g_input_config = GPIO_MUX1;
 	gpio_pin_control_register_t button_config = GPIO_MUX1 | GPIO_PS | GPIO_PE | INTR_FALLING_EDGE;
+	gpio_pin_control_register_t output_pit_config = GPIO_MUX1;
 
 	const spi_config_t g_spi_config =
 	{
@@ -164,6 +171,9 @@ void system_init()
 	SPI_init(&g_spi_config); /*! Configuration function for the LCD port*/
 	LCD_nokia_init(); /*! Configuration function for the LCD */
 
+	FTM0_output_compare_config();
+	buzzer_config();
+
 	/* Set push button start pin configuration */
 	GPIO_pin_control_register(GPIO_C, bit_3, &button_config);
 	/* drive push button start pin logic */
@@ -174,13 +184,36 @@ void system_init()
 	/* drive push button select pin logic */
 	GPIO_data_direction_pin(GPIO_C, GPIO_INPUT, bit_2);
 
+	/**Pin control configuration of GPIOB pin0 as GPIO*/
+	GPIO_pin_control_register(GPIO_C,bit_5,&output_pit_config);
+	/**Assigns a safe value to the output pin*/
+	GPIO_set_pin(GPIO_C,bit_5);
+	/**Configures GPIOD pin0 as output*/
+	GPIO_data_direction_pin(GPIO_C,GPIO_OUTPUT,bit_5);
+	GPIO_clear_pin(GPIO_C,bit_5);
+
+	PIT_clock_gating();
+	/**Activating PIT*/
+	PIT_enable();
+	/*Set the delay for the pit_1*/
+	PIT_delay(PIT_0, SYSTEM_CLOCK, DELAY);
+
+
 	/* ADC configuration */
 	ADC_init();
 
 	/**Sets the threshold for interrupts, if the interrupt has higher priority constant that the BASEPRI, the interrupt will not be attended*/
 	NVIC_set_basepri_threshold(PRIORITY_10);
+	/**Enables and sets a particular interrupt and its priority*/
+	NVIC_enable_interrupt_and_priotity(PORTA_IRQ,PRIORITY_5); //SW
 	/* Set PORT C interrupt priority */
-	NVIC_enable_interrupt_and_priotity(PORTC_IRQ, PRIORITY_2);
+	NVIC_enable_interrupt_and_priotity(PORTC_IRQ, PRIORITY_5);
+	/*Activating the ISR for the PIT and set the priority*/
+	NVIC_enable_interrupt_and_priotity(PIT_CH0_IRQ, PRIORITY_6);
+	/*Activating the ISR for the PIT and set the priority*/
+	NVIC_enable_interrupt_and_priotity(PIT_CH1_IRQ, PRIORITY_6);
+	/** Callbacks for PIT */
+	PIT_callback_init(PIT_0,send_sequence_buzzer);
 	/* Enable NVIC Interrupts */
 	NVIC_global_enable_interrupts;
 
