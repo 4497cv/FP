@@ -16,6 +16,7 @@ static terminal_state_t prev_term_st;    //previous terminal state
 static terminal_state_t current_term_st; //current  terminal state
 static system_state_t current_system_select;
 static boolean_t system_start;
+static boolean_t system_select;
 
 static FSM_terminal_t FSM_terminal[TERM_NUM_ST]=
 {
@@ -39,6 +40,10 @@ static FSM_system_t FSM_system[SYS_NUM_ST]=
 void system_menu(void)
 {
 
+	system_start = get_start_flag();
+	system_select = get_select_flag();
+
+
 	if(TRUE == system_start)
 	{
 		switch(current_system_select)
@@ -59,11 +64,20 @@ void system_menu(void)
 			break;
 		}
 		system_start = FALSE;
-		FSM_terminal[current_term_st].fptr();
+		toggle_start_flag();
+		toggle_select_flag();
 	}
-	else
+	else if(system_select)
 	{
+    	system_select_next_op();
 		system_dynamic_select_handler();
+	}
+
+	if(prev_term_st != current_term_st)
+	{
+		FSM_terminal[current_term_st].fptr();
+		//FSM_system[current_system_select].fptr();
+		prev_term_st = current_term_st;
 	}
 }
 
@@ -116,11 +130,6 @@ void system_player_board()
 void system_select_next_op()
 {
 	current_system_select = FSM_system[current_system_select].next[0];
-}
-
-void system_set_start()
-{
-	system_start = TRUE;
 }
 
 void system_init()

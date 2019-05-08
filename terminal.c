@@ -12,6 +12,16 @@
 
 #include "terminal.h"
 
+static FSM_terminal_select_t FSM_system[6]=
+{
+	{0, 0, " ", LCD_nokia_clear},
+	{0, 0, " ", LCD_set_frame},
+	{15, 10, " ", LCD_nokia_goto_xy},
+	{0, 0, "Classic", LCD_nokia_send_string},
+	{25, 10, " ", LCD_nokia_goto_xy},
+	{0, 0, "Mode", LCD_nokia_send_string}
+};
+
 void terminal_menu_start(void)
 {
 	LCD_terminal_startup();
@@ -115,6 +125,7 @@ void terminal_menu_op1(void)
 void terminal_menu_op2(void)
 {
 	LCD_nokia_clear();
+	LCD_set_frame();
 	LCD_nokia_goto_xy(22,10);
 	LCD_nokia_send_string("Simon");
 	LCD_nokia_goto_xy(25,11);
@@ -124,6 +135,7 @@ void terminal_menu_op2(void)
 void terminal_menu_op3(void)
 {
 	LCD_nokia_clear();
+	LCD_set_frame();
 	LCD_nokia_goto_xy(22,10);
 	LCD_nokia_send_string("Guitar");
 	LCD_nokia_goto_xy(25,11);
@@ -133,6 +145,7 @@ void terminal_menu_op3(void)
 void terminal_menu_op4(void)
 {
 	LCD_nokia_clear();
+	LCD_set_frame();
 	LCD_nokia_goto_xy(0,10);
 	LCD_nokia_send_string("Leaderboard");
 }

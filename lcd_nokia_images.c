@@ -1,3 +1,14 @@
+/*
+	\file 	  lcd_nokia_images.c
+	\brief	  This source files contains functions that are used to display images on the nokia 5110. 
+
+	\authors: César Villarreal Hernández, ie707560
+	          José Luis Rodríguez Gutiérrez, ie705694
+
+	\date	  03/05/2019
+
+	center coordinates 25,10
+*/
 
 #include "LCD_nokia_images.h"
 

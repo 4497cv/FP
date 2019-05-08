@@ -13,8 +13,9 @@
 
 #include "bits.h"
 #include "spi.h"
+#include "lcd_nokia.h"
 #include "LCD_nokia_images.h"
-
+#include "delay.h"
 
 #define TERM_NUM_ST     6
 #define SCREEN_LIMIT    84
@@ -30,6 +31,15 @@ typedef struct
 	void(*fptr)(void);	//Text string
 	terminal_state_t next[TERM_NUM_ST]; //FSM terminal states
 } FSM_terminal_t;
+
+typedef struct
+{
+	uint8_t x;
+	uint8_t y;
+	uint8_t *str;
+	void(*Fptr)(void);	//Text string
+} FSM_terminal_select_t;
+
 
 void terminal_menu_start(void);
 
