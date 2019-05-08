@@ -11,6 +11,8 @@
 #include "bits.h"
 #include "gpio.h"
 #include "FlexTimer.h"
+#include "pit.h"
+#include "buzzer.h"
 
 #define SEQUENCE_SIZE 8
 #define SIMON_SEQUENCE 5
@@ -46,6 +48,8 @@ typedef struct
 
 void get_rand_number(void);
 
-void get_sequence(void);
+void get_sequence(uint8_t rand_number_t);
+
+void send_sequence_buzzer(void);
 
 #endif /* SIMON_SAYS_H_ */

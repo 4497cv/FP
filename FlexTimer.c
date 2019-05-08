@@ -36,3 +36,12 @@ void FTM0_output_compare_config(void)
 	/**Select clock source and prescaler*/
 	FTM0->SC |= FTM_SC_CLKS (FLEX_TIMER_CLKS_1)| FTM_SC_PS(FLEX_TIMER_PS_128);
 }
+
+uint8_t FTM_get_counter_reg(void)
+{
+	uint8_t counter_reg = 0;
+
+	counter_reg = FTM0->CNT;
+
+	return counter_reg;
+}

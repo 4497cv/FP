@@ -8,7 +8,7 @@
 
 //#define DEBUG
 
-uint8_t rand_number = 0;
+uint8_t buffer_sequence[SIMON_SEQUENCE] = {0};
 
 sequence_map_t sequence_map[SEQUENCE_SIZE] =
 {
@@ -24,90 +24,43 @@ sequence_map_t sequence_map[SEQUENCE_SIZE] =
 
 void get_rand_number(void)
 {
-	rand_number = FTM0->CNT;
-	printf("%d\n",rand_number);
-	get_sequence();
+	uint8_t rand_number = 0;
+	rand_number = FTM_get_counter_reg();
+	printf("Sequence: %d\n",rand_number);
+	get_sequence(rand_number);
+	/*Enable interrupts*/
+	PIT_enable_interrupt(PIT_0);
+	PIT_enable_interrupt(PIT_1);
 }
 
-void get_sequence(void)
+void get_sequence(uint8_t rand_number_t)
 {
 	uint8_t i = 0;
-	uint8_t buffer_sequence[SIMON_SEQUENCE] = {0};
-	switch(rand_number)
+
+	for(i = 0; i < SIMON_SEQUENCE + 1 ;i++)
 	{
-	case SEQUENCE_ZERO:
-		for(i = 0; i < SIMON_SEQUENCE + 1 ;i++)
+		/*sequence*/
+		buffer_sequence[i] = sequence_map[rand_number_t].simon_says_sequence[i];
+		/*PRINT FOR DEBUG*/
+		printf("%d\n",buffer_sequence[i]);
+	}
+}
+
+void send_sequence_buzzer(void)
+{
+	static uint8_t index = 0;
+	if(TRUE == PIT_get_interrupt_flag_status(PIT_0))
+	{
+		note_frequency(buffer_sequence[index]);
+		index++;
+		if(index >= SIMON_SEQUENCE)
 		{
-			buffer_sequence[i] = sequence_map[SEQUENCE_ZERO].simon_says_sequence[i];
-
-			printf("%d\n",buffer_sequence[i]);
-
+			index = 0;
+			/*Disable interrupt of the pits*/
+			PIT_disable_interrupt(PIT_0);
+			PIT_disable_interrupt(PIT_1);
+			GPIO_clear_pin(GPIO_C,bit_5);
 		}
-		break;
-	case SEQUENCE_ONE:
-		for(i = 0; i < SIMON_SEQUENCE + 1 ;i++)
-		{
-			buffer_sequence[i] = sequence_map[SEQUENCE_ONE].simon_says_sequence[i];
-
-			printf("%d\n",buffer_sequence[i]);
-
-		}
-		break;
-	case SEQUENCE_TWO:
-		for(i = 0; i < SIMON_SEQUENCE + 1 ;i++)
-		{
-			buffer_sequence[i] = sequence_map[SEQUENCE_TWO].simon_says_sequence[i];
-
-			printf("%d\n",buffer_sequence[i]);
-
-		}
-		break;
-	case SEQUENCE_THREE:
-		for(i = 0; i < SIMON_SEQUENCE + 1 ;i++)
-		{
-			buffer_sequence[i] = sequence_map[SEQUENCE_THREE].simon_says_sequence[i];
-
-			printf("%d\n",buffer_sequence[i]);
-
-		}
-		break;
-	case SEQUENCE_FOUR:
-		for(i = 0; i < SIMON_SEQUENCE + 1 ;i++)
-		{
-			buffer_sequence[i] = sequence_map[SEQUENCE_FOUR].simon_says_sequence[i];
-
-			printf("%d\n",buffer_sequence[i]);
-
-		}
-		break;
-	case SEQUENCE_FIVE:
-		for(i = 0; i < SIMON_SEQUENCE + 1 ;i++)
-		{
-			buffer_sequence[i] = sequence_map[SEQUENCE_FIVE].simon_says_sequence[i];
-
-			printf("%d\n",buffer_sequence[i]);
-
-		}
-		break;
-	case SEQUENCE_SIX:
-		for(i = 0; i < SIMON_SEQUENCE + 1 ;i++)
-		{
-			buffer_sequence[i] = sequence_map[SEQUENCE_SIX].simon_says_sequence[i];
-
-			printf("%d\n",buffer_sequence[i]);
-
-		}
-		break;
-	case SEQUENCE_SEVEN:
-		for(i = 0; i < SIMON_SEQUENCE + 1 ;i++)
-		{
-			buffer_sequence[i] = sequence_map[SEQUENCE_SEVEN].simon_says_sequence[i];
-
-			printf("%d\n",buffer_sequence[i]);
-
-		}
-		break;
-	default:
-		break;
+		GPIO_clear_pin(GPIO_C,bit_5);
 	}
 }

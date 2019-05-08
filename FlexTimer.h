@@ -36,5 +36,7 @@
  */
 void FTM0_output_compare_config(void);
 
+uint8_t FTM_get_counter_reg(void);
+
 
 #endif /* FLEXTIMER_H_ */

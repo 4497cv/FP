@@ -11,12 +11,15 @@
 #include "FlexTimer.h"
 #include "gpio.h"
 #include "pit.h"
+#include "simon_says.h"
 
 void buzzer_config(void);
 
 void buzzer_update_freq(float delay);
 
 void buzzer_toogle(void);
+
+void note_frequency(uint8_t index);
 
 
 #endif /* BUZZER_H_ */

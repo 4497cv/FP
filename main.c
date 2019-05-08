@@ -65,6 +65,8 @@ int main(void)
 	NVIC_enable_interrupt_and_priotity(PORTC_IRQ,PRIORITY_5);
 	/*Activating the ISR for the PIT and set the priority*/
 	NVIC_enable_interrupt_and_priotity(PIT_CH0_IRQ, PRIORITY_6);
+	/*Activating the ISR for the PIT and set the priority*/
+	NVIC_enable_interrupt_and_priotity(PIT_CH1_IRQ, PRIORITY_6);
 
 	NVIC_global_enable_interrupts;
 
@@ -72,7 +74,8 @@ int main(void)
 	/** Callbacks for gpio*/
 	GPIO_callback_init(GPIO_A,get_rand_number);
 	/** Callbacks for PIT */
-	PIT_callback_init(PIT_0,buzzer_toogle);
+	PIT_callback_init(PIT_0,send_sequence_buzzer);
+	//PIT_callback_init(PIT_1,send_sequence_buzzer);
 
 	for(;;)
 	{
