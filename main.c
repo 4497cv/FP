@@ -7,6 +7,7 @@
 
 #include "system.h"
 #include "frequency_decoder.h"
+#include "guitar_tuner.h"
 
 int main(void)
 {

@@ -8,7 +8,8 @@
 
 #include "frequency_decoder.h"
 static uint8_t sample_counter = 0;
-double highest_val = 0;
+static float highest_val = 0;
+static boolean_t valid_flag;
 
 Keymap_t key_map[KEYMAP_SIZE]=
 {
@@ -21,61 +22,76 @@ Keymap_t key_map[KEYMAP_SIZE]=
  {'B',   B1_1, B1_2, B1_3, B1_4}  /*  SI  */
 };
 
-void FREQ_READ()
+uint8_t FREQ_get_current_note(void)
 {
 	uint8_t read_val, i;
 	uint8_t temp;
-
+	uint8_t key;
+	boolean_t lock_flag;
 	uint8_t cadena[STRING_MAX] = {0};
-	double voltage_val;
-	read_val = ADC_read();
+	float voltage_val;
 
-	voltage_val = (VOLT*read_val)/ADC_MAX;
-
-	if(highest_val < voltage_val)
-	{
-		highest_val = voltage_val;
-	}
-	else
-	{
-		voltage_val = highest_val;
-	}
-
-	sample_counter++;
-	i=0;
+	lock_flag = TRUE;
+	valid_flag = FALSE;
 
 	do
 	{
-		temp = (uint8_t)voltage_val;
-		cadena[i] = temp;
-		i++;
+		read_val = ADC_read();
+		voltage_val = (VOLT*read_val)/ADC_MAX;
 
-		voltage_val = voltage_val - temp;
-		voltage_val = voltage_val * 10;
+		if(highest_val < voltage_val)
+		{
+			highest_val = voltage_val;
+		}
+		else
+		{
+			voltage_val = highest_val;
+		}
 
-		temp = (uint8_t)voltage_val;
-		cadena[i] = temp;
-		i++;
+		sample_counter++;
+		i=0;
 
-		voltage_val = voltage_val - temp;
-		voltage_val = voltage_val * 10;
+		do
+		{
+			temp = (uint8_t)voltage_val;
+			cadena[i] = temp;
+			i++;
 
-		temp = (uint8_t)voltage_val;
-		cadena[i] = temp;
-	}while(i < 5);
+			voltage_val = voltage_val - temp;
+			voltage_val = voltage_val * 10;
+
+			temp = (uint8_t)voltage_val;
+			cadena[i] = temp;
+			i++;
+
+			voltage_val = voltage_val - temp;
+			voltage_val = voltage_val * 10;
+
+			temp = (uint8_t)voltage_val;
+			cadena[i] = temp;
+		}while(i < 5);
 
 
-	if(NSAMPLES == sample_counter)
-	{
-		sample_counter = 0;
-		highest_val = 0;
-		printf("\n\n%c\n\n", FREQ_get_notekey(cadena));
-	}
+		if(NSAMPLES == sample_counter)
+		{
+			sample_counter = 0;
+			highest_val = 0;
+			//key = FREQ_decode_voltage(cadena);
+			//printf("%c\n", key);
+		    FREQ_show_current_voltage(cadena);
+		}
 
-	FREQ_show_current_voltage(cadena);
+		if(TRUE == valid_flag)
+		{
+			//lock_flag = FALSE;
+		}
+		//FREQ_show_current_voltage(cadena);
+	}while(TRUE == lock_flag);
+
+	return key;
 }
 
-uint8_t FREQ_get_notekey(uint8_t voltage_string[STRING_MAX])
+uint8_t FREQ_decode_voltage(uint8_t voltage_string[STRING_MAX])
 {
 	uint8_t i;
 	uint8_t index;
@@ -93,6 +109,7 @@ uint8_t FREQ_get_notekey(uint8_t voltage_string[STRING_MAX])
 		{
 			index = i;
 			notfound_flag = FALSE;
+			valid_flag = TRUE;
 		}
 	}
 
@@ -109,11 +126,6 @@ uint8_t FREQ_get_notekey(uint8_t voltage_string[STRING_MAX])
 }
 
 void FREQ_show_current_voltage(uint8_t voltage_string[STRING_MAX])
-{
-	printf("Vout = %i.%i%i%i%i V\n", voltage_string[0], voltage_string[1], voltage_string[2], voltage_string[3], voltage_string[4]);
-}
-
-void FREQ_get(uint8_t voltage_string[STRING_MAX])
 {
 	printf("Vout = %i.%i%i%i%i V\n", voltage_string[0], voltage_string[1], voltage_string[2], voltage_string[3], voltage_string[4]);
 }

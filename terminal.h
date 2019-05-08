@@ -15,7 +15,6 @@
 #include "spi.h"
 #include "lcd_nokia.h"
 #include "LCD_nokia_images.h"
-#include "delay.h"
 
 #define TERM_NUM_ST     6
 #define SCREEN_LIMIT    84
