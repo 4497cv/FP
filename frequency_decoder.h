@@ -10,6 +10,7 @@
 
 #include "adc.h"
 #include <stdio.h>
+#include "simon_says.h"
 
 #define STRING_MAX 5
 
@@ -62,7 +63,7 @@
 #define C2_3 5
 #define C2_4 8
 
-#define NSAMPLES 100
+#define NSAMPLES 300
 #define KEYMAP_SIZE 7
 
 typedef struct
@@ -74,10 +75,12 @@ typedef struct
    uint8_t nano;
 } Keymap_t;
 
-uint8_t FREQ_get_current_note(void);
+boolean_t FREQ_get_current_note(uint8_t note_number);
 
 uint8_t FREQ_decode_voltage(uint8_t voltage_string[STRING_MAX]);
 
 void FREQ_show_current_voltage(uint8_t voltage_string[STRING_MAX]);
+
+void FREQ_voltage_drop();
 
 #endif /* FREQUENCY_DECODER_H_ */

@@ -94,8 +94,7 @@ void system_play_classic()
 
 void system_play_SimonMode()
 {
-
-	get_rand_number();
+	generate_sequence_buffer();
 
 }
 
