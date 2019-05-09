@@ -61,26 +61,26 @@ void note_frequency(uint8_t index)
 {
 	switch(index)
 	{
-	case DO:
-		buzzer_update_freq(freq_delay[DO]);
+	case C:
+		buzzer_update_freq(freq_delay[0]);
 		break;
-	case RE:
-		buzzer_update_freq(freq_delay[RE]);
+	case D:
+		buzzer_update_freq(freq_delay[1]);
 		break;
-	case MI:
-		buzzer_update_freq(freq_delay[MI]);
+	case E:
+		buzzer_update_freq(freq_delay[2]);
 		break;
-	case FA:
-		buzzer_update_freq(freq_delay[FA]);
+	case F:
+		buzzer_update_freq(freq_delay[3]);
 		break;
-	case SOL:
-		buzzer_update_freq(freq_delay[SOL]);
+	case G:
+		buzzer_update_freq(freq_delay[4]);
 		break;
-	case LA:
-		buzzer_update_freq(freq_delay[LA]);
+	case A:
+		buzzer_update_freq(freq_delay[5]);
 		break;
-	case SI:
-		buzzer_update_freq(freq_delay[SI]);
+	case B:
+		buzzer_update_freq(freq_delay[6]);
 		break;
 	}
 }

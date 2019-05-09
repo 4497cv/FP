@@ -63,7 +63,7 @@
 #define C2_3 5
 #define C2_4 8
 
-#define NSAMPLES 300
+#define NSAMPLES 150
 #define KEYMAP_SIZE 7
 
 typedef struct

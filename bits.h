@@ -9,6 +9,7 @@
 #define BITS_H_
 
 #define NULL 0
+#define ZERO 0
 
 /*! This definition is as a general definitions to bits in regiter or pins in the microcontroller.*/
 typedef enum 
@@ -116,6 +117,16 @@ typedef enum
 	ASCII_DOT = 250
 }ASCII_type;
 
+typedef enum
+{
+	C = 67,
+	D = 68,
+	E = 69,
+	F = 70,
+	G = 71,
+	A = 65,
+	B = 66,
+} musical_notes;
 /** This enumeration defines the UART's ports to be used **/
 typedef enum {UART_0,UART_1,UART_2,UART_3,UART_4,UART_5} uart_channel_t;
 
