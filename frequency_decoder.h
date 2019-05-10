@@ -63,7 +63,7 @@
 #define C2_3 5
 #define C2_4 8
 
-#define NSAMPLES 150
+#define NSAMPLES 200
 #define KEYMAP_SIZE 7
 
 typedef struct
@@ -82,5 +82,7 @@ uint8_t FREQ_decode_voltage(uint8_t voltage_string[STRING_MAX]);
 void FREQ_show_current_voltage(uint8_t voltage_string[STRING_MAX]);
 
 void FREQ_voltage_drop();
+
+void notedetector();
 
 #endif /* FREQUENCY_DECODER_H_ */

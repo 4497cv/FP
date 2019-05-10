@@ -3,7 +3,7 @@
 	\brief	  This is the source file that contains the functions that display information by UART.
 
 	\authors: César Villarreal Hernández, ie707560
-	          José Luis Rodríguez Gutiérrez, ie705694
+	          Luís Fernando Rodríguez Gutiérrez, ie705694
 
 	\date	  03/05/2019
 
@@ -140,6 +140,50 @@ void terminal_menu_op4(void)
 	LCD_nokia_send_string("Leaderboard");
 }
 
+
+void terminal_playnote1()
+{
+	LCD_nokia_clear();
+	LCD_nokia_goto_xy(0,10);
+	LCD_nokia_send_string("Play Note #1");
+}
+
+void terminal_playnote2()
+{
+	LCD_nokia_clear();
+	LCD_nokia_goto_xy(0,10);
+	LCD_nokia_send_string("Play Note #2");
+}
+
+void terminal_playnote3()
+{
+	LCD_nokia_clear();
+	LCD_nokia_goto_xy(0,10);
+	LCD_nokia_send_string("Play Note #3");
+}
+
+
+void terminal_playnote4()
+{
+	LCD_nokia_clear();
+	LCD_nokia_goto_xy(0,10);
+	LCD_nokia_send_string("Play Note #4");
+}
+
+
+void terminal_playnote5()
+{
+	LCD_nokia_clear();
+	LCD_nokia_goto_xy(0,10);
+	LCD_nokia_send_string("Play Note #5");
+}
+
+void terminal_VoltageDrop()
+{
+	LCD_nokia_clear();
+	LCD_nokia_goto_xy(0,10);
+	LCD_nokia_send_string("Waiting Voltage Drop");
+}
 
 //	FSM_terminal_config_t FSM_terminal_menu[FSM_SELECT_SIZE]=
 //	{

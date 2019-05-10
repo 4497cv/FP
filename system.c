@@ -3,7 +3,8 @@
 	\brief	  This program contains the functions that configure the MCU's peripherals and external hardware.
 			  It also contains the user menu.
 	\authors: César Villarreal Hernández, ie707560
-	          José Luis Rodríguez Gutiérrez, ie705694
+	          Luís Fernando Rodríguez Gutiérrez, ie705694
+
 	\date	  02/05/2019
 
      @TODO: implement system's menu using UART interruptions. Polling.
@@ -139,7 +140,6 @@ void system_select_next_op()
 
 void system_init()
 {
-	/* System GPIO configuration */
 	gpio_pin_control_register_t uart_config = GPIO_MUX3;
 	gpio_pin_control_register_t g_input_config = GPIO_MUX1;
 	gpio_pin_control_register_t button_config = GPIO_MUX1 | GPIO_PS | GPIO_PE | INTR_FALLING_EDGE;
@@ -159,47 +159,60 @@ void system_init()
 			{GPIO_D, bit_1, bit_2}
 	};
 
+	/* ~~~~~~~~ Clock gating activation ~~~~~~~~ */
 	/* Enable PORT B clockgating */
 	GPIO_clock_gating(GPIO_B);
 	/* Enable PORT C clockgating */
 	GPIO_clock_gating(GPIO_C);
 	/* Enable PORT D clockgating */
 	GPIO_clock_gating(GPIO_D);
+	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-	/*SPI config*/
+	/* ~~~~~~~~~~~~~~ SPI config ~~~~~~~~~~~~~ */
 	SPI_init(&g_spi_config); /*! Configuration function for the LCD port*/
-	LCD_nokia_init(); /*! Configuration function for the LCD */
+	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
+	/* ~~~~~~~~~ LCD Nokia configuration~~~~~~ */
+	LCD_nokia_init(); 
+	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+	/* ~~~~~~~~~ FlexTimer configuration ~~~~~~ */
 	FTM0_output_compare_config();
-	buzzer_config();
+	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
+	/*~~~~~~~ Push Buttons configuration ~~~~~~~*/
 	/* Set push button start pin configuration */
 	GPIO_pin_control_register(GPIO_C, bit_3, &button_config);
 	/* drive push button start pin logic */
 	GPIO_data_direction_pin(GPIO_C, GPIO_INPUT, bit_3);
-
 	/* Set push button select pin configuration */
 	GPIO_pin_control_register(GPIO_C, bit_2, &button_config);
 	/* drive push button select pin logic */
 	GPIO_data_direction_pin(GPIO_C, GPIO_INPUT, bit_2);
+	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-	/**Pin control configuration of GPIOB pin0 as GPIO*/
-	GPIO_pin_control_register(GPIO_C,bit_5,&output_pit_config);
+	/*~~~~~~~ Buzzer configuration ~~~~~~~~~~~~*/
+ 	/**Pin control configuration of GPIOB pin0 as GPIO*/
+	GPIO_pin_control_register(GPIO_C, bit_5, &output_pit_config);
 	/**Assigns a safe value to the output pin*/
-	GPIO_set_pin(GPIO_C,bit_5);
+	GPIO_set_pin(GPIO_C, bit_5);
 	/**Configures GPIOD pin0 as output*/
-	GPIO_data_direction_pin(GPIO_C,GPIO_OUTPUT,bit_5);
+	GPIO_data_direction_pin(GPIO_C, GPIO_OUTPUT,bit_5);
 	GPIO_clear_pin(GPIO_C,bit_5);
+    /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
+	/*~~~~~~~~~~~~ PIT configuration ~~~~~~~~~~*/
 	PIT_clock_gating();
-	/**Activating PIT*/
+	/* Activating PIT */
 	PIT_enable();
-	/*Set the delay for the pit_1*/
+	/* Set the delay for the pit_1 */
 	PIT_delay(PIT_0, SYSTEM_CLOCK, DELAY);
+	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 
-	/* ADC configuration */
+	/* ~~~~~~~~  ADC configuration ~~~~~~~~ */
 	ADC_init();
+	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 	/**Sets the threshold for interrupts, if the interrupt has higher priority constant that the BASEPRI, the interrupt will not be attended*/
 	NVIC_set_basepri_threshold(PRIORITY_10);

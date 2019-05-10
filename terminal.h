@@ -53,4 +53,13 @@ void terminal_menu_op2(void);
 void terminal_menu_op3(void);
 void terminal_menu_op4(void);
 
+void terminal_playnote1();
+void terminal_playnote2();
+void terminal_playnote3();
+void terminal_playnote4();
+void terminal_playnote5();
+
+void terminal_VoltageDrop();
+
+
 #endif /* UART_TERM_H_ */

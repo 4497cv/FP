@@ -1,6 +1,7 @@
 ﻿# FINAL PROJECT: GUITAR GUESSING GAME
-Authors: César Villarreal Hernández     @4497cv,
-         José Luís Rodríguez Gutiérrez  @LProtox,
+\authors: César Villarreal Hernández         @4497cv,
+	      Luís Fernando Rodríguez Gutiérrez  @LProtox,
+
 
 Software Layers:
 > Microcontroller Abstraction Layer: GPIO, UART, PIT, FlexTimer
@@ -18,6 +19,8 @@ PIN LAYOUT:
 > LCD CLK: PORT D, pin 1
 > LCD Serial Data Input (SDIN): PORT D, pin 2
 > LCD DC: PORT D, pin 3
+
+> Buzzer Port C bit 5
 
 
 Hardware Used:

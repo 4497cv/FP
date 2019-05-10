@@ -15,6 +15,7 @@
 #include "buzzer.h"
 #include "frequency_decoder.h"
 #include "stdio.h"
+#include "terminal.h"
 
 #define SEQUENCE_SIZE  8
 #define SIMON_SEQUENCE 5
@@ -62,6 +63,12 @@ typedef struct
 	uint8_t *key_number;
 	NoteBuffer_t next[5];
 } FSM_SS_t;
+
+typedef struct
+{
+	void(*fptr)(void);	//Text string
+	NoteBuffer_t next[TERM_NUM_ST]; //FSM terminal states
+} TERM_playnotes_t;
 
 typedef struct
 {

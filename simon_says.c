@@ -30,6 +30,15 @@ static FSM_SS_t FSM_Buffer[5]=
 	{&buffer_sequence[4],   {buffer_S1,  buffer_S2, buffer_S3, buffer_S4, buffer_S5}}
 };
 
+static TERM_playnotes_t FSM_term_playnotes[5]=
+{
+	{terminal_playnote1,   {buffer_S2,  buffer_S3, buffer_S4, buffer_S5, buffer_S1}},
+	{terminal_playnote2,   {buffer_S3,  buffer_S4, buffer_S5, buffer_S1, buffer_S2}},
+	{terminal_playnote3,   {buffer_S4,  buffer_S5, buffer_S1, buffer_S2, buffer_S3}},
+	{terminal_playnote4,   {buffer_S5,  buffer_S1, buffer_S2, buffer_S3, buffer_S4}},
+	{terminal_playnote5,   {buffer_S1,  buffer_S2, buffer_S3, buffer_S4, buffer_S5}}
+};
+
 void generate_sequence_buffer(void)
 {
 	uint8_t sequence_number;
@@ -103,7 +112,7 @@ void SS_handle_user_input(void)
 
 	correct_flag = FALSE;
 	current_state = buffer_S1;
-	note_index = 1;
+	note_index = 0;
 
 	do
 	{
@@ -113,6 +122,7 @@ void SS_handle_user_input(void)
 #ifdef DEBUG
 		printf("Play note #%i\n", note_index);
 #endif
+		FSM_term_playnotes[note_index].fptr();
 
 		key_flag = FREQ_get_current_note(*FSM_Buffer[current_state].key_number);
 

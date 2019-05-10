@@ -4,7 +4,8 @@
 			  This is the source file for the matrix module. It contains functions
 			  for the operation of the M1707042 8*8 LED matrix.
 	\authors: César Villarreal Hernández, ie707560
-	          José Luis Rodríguez Gutierrez,ie705694
+	          Luís Fernando Rodríguez Gutiérrez, ie705694
+
 	\date	  28/04/2019
 	Graphics created using: http://robojax.com/learn/arduino/8x8LED/
  */
