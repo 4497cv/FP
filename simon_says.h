@@ -24,18 +24,6 @@
 
 typedef enum
 {
-	SEQUENCE_ZERO,
-	SEQUENCE_ONE,
-	SEQUENCE_TWO,
-	SEQUENCE_THREE,
-	SEQUENCE_FOUR,
-	SEQUENCE_FIVE,
-	SEQUENCE_SIX,
-	SEQUENCE_SEVEN
-} sequence_enum_t;
-
-typedef enum
-{
 	DO,
 	RE,
 	MI,
@@ -45,18 +33,6 @@ typedef enum
 	SI
 } string_note_t;
 
-typedef enum
-{
-	buffer_S1,
-	buffer_S2,
-	buffer_S3,
-	buffer_S4,
-	buffer_S5,
-	buffer_S6,
-	buffer_S7,
-	buffer_S8,
-	buffer_S9
-} NoteBuffer_t;
 
 typedef struct
 {

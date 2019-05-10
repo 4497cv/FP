@@ -47,24 +47,24 @@ boolean_t FREQ_get_current_note(uint8_t note_number)
 	switch(note_number)
 	{
 		case C:
-			samples_value = 150;
+			samples_value = 300;
 		break;
 		case D:
-			samples_value = 400;
+			samples_value = 300;
 		break;
 		case E:
 			samples_value = 300;
 		break;
 		case F:
-			samples_value = 400;
+			samples_value = 300;
 		case G:
 			samples_value = 400;
 		break;
 		case A:
-			samples_value = 1;
+			samples_value = 300;
 		break;
 		case B:
-			samples_value = 400;
+			samples_value = 300;
 		break;
 		default:
 		break;
@@ -114,10 +114,7 @@ boolean_t FREQ_get_current_note(uint8_t note_number)
 		key = FREQ_decode_voltage(cadena);
 		//printf("%c\n", key);
 
-		
 //		FREQ_show_current_voltage(cadena);
-
-
 
 		if(samples_value == sample_counter)
 		{
@@ -342,11 +339,7 @@ void notedetector()
 		key = FREQ_decode_voltage(cadena);
 		//printf("%c\n", key);
 
-
-
-		//FREQ_show_current_voltage(cadena);
-
-
+		FREQ_show_current_voltage(cadena);
 
 //		if(valid_flag)
 //		{
@@ -375,6 +368,6 @@ void notedetector()
 		//FREQ_show_current_voltage(cadena);
 	}while(TRUE == lock_flag);
 
-	printf("%c, %c, %c\n", peak_buffer[0], peak_buffer[1], peak_buffer[2]);
+	//printf("%c, %c, %c\n", peak_buffer[0], peak_buffer[1], peak_buffer[2]);
 	return key_flag;
 }

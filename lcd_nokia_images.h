@@ -20,6 +20,8 @@ void LCD_terminal_startup(void);
 
 void LCD_set_frame(void);
 
+void LCD_set_pentagram_sequence(sequence_enum_t sequence_state, NoteBuffer_t note_state);
+
 #endif /* LCD_NOKIA_IMAGES_H_ */
 
 //{&logo_0[0], 		{terminal_S1, terminal_S2, terminal_S3, terminal_S4, terminal_S5, terminal_S0}},

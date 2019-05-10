@@ -1,13 +1,15 @@
 /*
- * main.c
- *
- *  Created on: 2 may. 2019
- *      Author: César
- */
+	\file 	  main.c
+	\brief	  main program.
+
+	\authors: César Villarreal Hernández, ie707560
+	          Luís Fernando Rodríguez Gutiérrez, ie705694
+
+	\date	  10/05/2019
+*/
 
 #include "system.h"
-#include "frequency_decoder.h"
-#include "guitar_tuner.h"
+#include "lcd_nokia_images.h"
 
 int main(void)
 {
@@ -15,7 +17,7 @@ int main(void)
 
 	while(1)
 	{
-		notedetector();
+
 	}
 
 	return 0;

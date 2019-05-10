@@ -8,6 +8,7 @@ static boolean_t sequence_complete_g;
 static uint8_t current_key;
 static uint8_t prev_key;
 static boolean_t key_flag;
+static uint8_t sequence_number;
 
 sequence_map_t sequence_map[SEQUENCE_SIZE] =
 {
@@ -41,8 +42,6 @@ static TERM_playnotes_t FSM_term_playnotes[5]=
 
 void generate_sequence_buffer(void)
 {
-	uint8_t sequence_number;
- 
     sequence_number = FTM_get_counter_reg();
 	sequence_complete_g = FALSE;
 
@@ -123,12 +122,13 @@ void SS_handle_user_input(void)
 		printf("Play note #%i\n", note_index);
 #endif
 		FSM_term_playnotes[note_index].fptr();
-
+		LCD_set_pentagram_sequence(sequence_number, current_state);
 		key_flag = FREQ_get_current_note(*FSM_Buffer[current_state].key_number);
 
 		if(key_flag)
 		{
 			/* send victory message to SPI */
+			terminal_correct_msg();
 #ifdef DEBUG
 			printf("Correct!\n");
 #endif
@@ -147,17 +147,19 @@ void SS_handle_user_input(void)
 
 	if(TRUE == correct_flag)
 	{
-		/* Send victory message to SPI */
-#ifdef DEBUG
-		printf("YOU WON!\n");
-#endif
+		/* Send victory message to SPI */	
+		terminal_victory_msg();
+		#ifdef DEBUG
+			printf("you won!\n");
+		#endif
 	}
 	else
 	{
 		/* Send losing message to SPI */
-#ifdef DEBUG
-		printf("GAME OVER\n");
-#endif
+		terminal_game_over_msg();
+		#ifdef DEBUG
+			printf("GAME OVER.\n");
+		#endif
 	}
 }
 

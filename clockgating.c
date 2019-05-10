@@ -1,9 +1,10 @@
 /*
- * clockgating.c
- *
- *  Created on: 2 may. 2019
- *      Author: César
- */
+	\file 	  clockgating.c
+	\brief	  
+	\authors: César Villarreal Hernández, ie707560
+	          Luís Fernando Rodríguez Gutiérrez, ie705694
+	\date	  02/05/2019
+*/
 
 #include "clockgating.h"
 

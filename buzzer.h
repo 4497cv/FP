@@ -16,8 +16,6 @@
 #define SYSTEM_CLOCK (21000000U)
 #define DELAY (1.0F)
 
-void buzzer_config(void);
-
 void buzzer_update_freq(float delay);
 
 void buzzer_toogle(void);

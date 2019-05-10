@@ -53,13 +53,16 @@ void terminal_menu_op2(void);
 void terminal_menu_op3(void);
 void terminal_menu_op4(void);
 
-void terminal_playnote1();
-void terminal_playnote2();
-void terminal_playnote3();
-void terminal_playnote4();
-void terminal_playnote5();
+void terminal_playnote1(void);
+void terminal_playnote2(void);
+void terminal_playnote3(void);
+void terminal_playnote4(void);
+void terminal_playnote5(void);
 
-void terminal_VoltageDrop();
+void terminal_VoltageDrop(void);
 
+void terminal_victory_msg(void);
+void terminal_game_over_msg(void);
+void terminal_correct_msg(void);
 
 #endif /* UART_TERM_H_ */

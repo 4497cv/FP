@@ -136,64 +136,76 @@ void terminal_menu_op4(void)
 {
 	LCD_nokia_clear();
 	LCD_set_frame();
-	LCD_nokia_goto_xy(0,10);
-	LCD_nokia_send_string("Leaderboard");
+	LCD_nokia_goto_xy(22,10);
+	LCD_nokia_send_string("Leader");
+	LCD_nokia_goto_xy(25,11);
+	LCD_nokia_send_string("Board");
 }
 
 
-void terminal_playnote1()
+void terminal_playnote1(void)
 {
 	LCD_nokia_clear();
 	LCD_nokia_goto_xy(0,10);
 	LCD_nokia_send_string("Play Note #1");
 }
 
-void terminal_playnote2()
+void terminal_playnote2(void)
 {
 	LCD_nokia_clear();
 	LCD_nokia_goto_xy(0,10);
 	LCD_nokia_send_string("Play Note #2");
 }
 
-void terminal_playnote3()
+void terminal_playnote3(void)
 {
 	LCD_nokia_clear();
 	LCD_nokia_goto_xy(0,10);
 	LCD_nokia_send_string("Play Note #3");
 }
 
-
-void terminal_playnote4()
+void terminal_playnote4(void)
 {
 	LCD_nokia_clear();
 	LCD_nokia_goto_xy(0,10);
 	LCD_nokia_send_string("Play Note #4");
 }
 
-
-void terminal_playnote5()
+void terminal_playnote5(void)
 {
 	LCD_nokia_clear();
 	LCD_nokia_goto_xy(0,10);
 	LCD_nokia_send_string("Play Note #5");
 }
 
-void terminal_VoltageDrop()
+void terminal_VoltageDrop(void)
+{
+	LCD_nokia_clear();
+	LCD_nokia_goto_xy(22,10);
+	LCD_nokia_send_string("Waiting for");
+	LCD_nokia_goto_xy(25,11);
+	LCD_nokia_send_string("voltage");
+	LCD_nokia_goto_xy(25,11);
+	LCD_nokia_send_string("drop");
+}
+
+void terminal_victory_msg(void)
 {
 	LCD_nokia_clear();
 	LCD_nokia_goto_xy(0,10);
-	LCD_nokia_send_string("Waiting Voltage Drop");
+	LCD_nokia_send_string("YOU WON!");
 }
 
-//	FSM_terminal_config_t FSM_terminal_menu[FSM_SELECT_SIZE]=
-//	{
-//		{"\033[2J", 				 {terminal_S1, terminal_S2, terminal_S3, terminal_S4, terminal_S5, terminal_S6, terminal_S7, terminal_S8, terminal_S0}},
-//		{"\033[0;30;41m", 			 {terminal_S2, terminal_S3, terminal_S4, terminal_S5, terminal_S6, terminal_S7, terminal_S8, terminal_S0, terminal_S1}},
-//		{"\033[2J", 	  			 {terminal_S3, terminal_S4, terminal_S5, terminal_S6, terminal_S7, terminal_S8, terminal_S0, terminal_S1, terminal_S2}},
-//		{"\033[0;47;40m",   		 {terminal_S4, terminal_S5, terminal_S6, terminal_S7, terminal_S8, terminal_S0, terminal_S1, terminal_S2, terminal_S3}},
-//		{"\033[10;10H" ,			 {terminal_S5, terminal_S6, terminal_S7, terminal_S8, terminal_S0, terminal_S1, terminal_S2, terminal_S3, terminal_S4}},
-//		{"1) Play classic mode\r",   {terminal_S6, terminal_S7, terminal_S8, terminal_S0, terminal_S1, terminal_S2, terminal_S3, terminal_S4, terminal_S5}},
-//		{"\033[11;10H",   			 {terminal_S7, terminal_S8, terminal_S0, terminal_S1, terminal_S2, terminal_S3, terminal_S4, terminal_S5, terminal_S6}},
-//		{"2) Guitar tuner \r", 	     {terminal_S8, terminal_S0, terminal_S1, terminal_S2, terminal_S3, terminal_S4, terminal_S5, terminal_S6, terminal_S7}},
-//		{"\033[14;10H",  			 {terminal_S0, terminal_S1, terminal_S2, terminal_S3, terminal_S4, terminal_S5, terminal_S6, terminal_S7, terminal_S8}}
-//	};
+void terminal_game_over_msg(void)
+{
+	LCD_nokia_clear();
+	LCD_nokia_goto_xy(0,10);
+	LCD_nokia_send_string("GAME OVER :(");
+}
+
+void terminal_correct_msg(void)
+{
+	LCD_nokia_clear();
+	LCD_nokia_goto_xy(0,10);
+	LCD_nokia_send_string("Correct!");
+}
