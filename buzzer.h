@@ -12,9 +12,7 @@
 #include "gpio.h"
 #include "pit.h"
 #include "simon_says.h"
-
-#define SYSTEM_CLOCK (21000000U)
-#define DELAY (1.0F)
+#include "system.h"
 
 void buzzer_update_freq(float delay);
 

@@ -25,13 +25,9 @@ void terminal_menu_select0(void)
 	LCD_nokia_goto_xy(0,1);
 	LCD_nokia_send_string("------------");
 	LCD_nokia_goto_xy(0,2);
-	LCD_nokia_send_string("1)Classic");
+	LCD_nokia_send_string("1)Classic ");
 	LCD_nokia_goto_xy(0,3);
-	LCD_nokia_send_string("2)Pitch");
-	LCD_nokia_goto_xy(0,4);
-	LCD_nokia_send_string("3)Tuner");
-	LCD_nokia_goto_xy(0,5);
-	LCD_nokia_send_string("4)Scores");
+	LCD_nokia_send_string("2)Scores");
 }
 
 void terminal_menu_select1(void)
@@ -44,11 +40,7 @@ void terminal_menu_select1(void)
 	LCD_nokia_goto_xy(0,2);
 	LCD_nokia_send_string(" 1)Classic");
 	LCD_nokia_goto_xy(0,3);
-	LCD_nokia_send_string("2)Pitch");
-	LCD_nokia_goto_xy(0,4);
-	LCD_nokia_send_string("3)Tuner");
-	LCD_nokia_goto_xy(0,5);
-	LCD_nokia_send_string("4)Scores");
+	LCD_nokia_send_string("2)Scores");
 }
 
 void terminal_menu_select2(void)
@@ -61,46 +53,9 @@ void terminal_menu_select2(void)
 	LCD_nokia_goto_xy(0,2);
 	LCD_nokia_send_string("1)Classic");
 	LCD_nokia_goto_xy(0,3);
-	LCD_nokia_send_string(" 2)Pitch");
-	LCD_nokia_goto_xy(0,4);
-	LCD_nokia_send_string("3)Tuner");
-	LCD_nokia_goto_xy(0,5);
-	LCD_nokia_send_string("4)Scores");
+	LCD_nokia_send_string(" 2)Scores");
 }
 
-void terminal_menu_select3(void)
-{
-	LCD_nokia_clear();
-	LCD_nokia_goto_xy(25,0);
-	LCD_nokia_send_string("MENU");
-	LCD_nokia_goto_xy(0,1);
-	LCD_nokia_send_string("------------");
-	LCD_nokia_goto_xy(0,2);
-	LCD_nokia_send_string("1)Classic");
-	LCD_nokia_goto_xy(0,3);
-	LCD_nokia_send_string("2)Pitch");
-	LCD_nokia_goto_xy(0,4);
-	LCD_nokia_send_string(" 3)Tuner");
-	LCD_nokia_goto_xy(0,5);
-	LCD_nokia_send_string("4)Scores");
-}
-
-void terminal_menu_select4(void)
-{
-	LCD_nokia_clear();
-	LCD_nokia_goto_xy(25,0);
-	LCD_nokia_send_string("MENU");
-	LCD_nokia_goto_xy(0,1);
-	LCD_nokia_send_string("------------");
-	LCD_nokia_goto_xy(0,2);
-	LCD_nokia_send_string("1)Classic");
-	LCD_nokia_goto_xy(0,3);
-	LCD_nokia_send_string("2)Pitch");
-	LCD_nokia_goto_xy(0,4);
-	LCD_nokia_send_string("3)Tuner");
-	LCD_nokia_goto_xy(0,5);
-	LCD_nokia_send_string(" 4)Scores");
-}
 
 void terminal_menu_op1(void)
 {
@@ -114,26 +69,6 @@ void terminal_menu_op1(void)
 
 void terminal_menu_op2(void)
 {
-  	LCD_nokia_clear();
-	LCD_set_frame();
-	LCD_nokia_goto_xy(22,10);
-	LCD_nokia_send_string("Simon");
-	LCD_nokia_goto_xy(25,11);
-	LCD_nokia_send_string("Says");
-}
-
-void terminal_menu_op3(void)
-{
-	LCD_nokia_clear();
-	LCD_set_frame();
-	LCD_nokia_goto_xy(22,10);
-	LCD_nokia_send_string("Guitar");
-	LCD_nokia_goto_xy(25,11);
-	LCD_nokia_send_string("Tuner");
-}
-
-void terminal_menu_op4(void)
-{
 	LCD_nokia_clear();
 	LCD_set_frame();
 	LCD_nokia_goto_xy(22,10);
@@ -141,7 +76,6 @@ void terminal_menu_op4(void)
 	LCD_nokia_goto_xy(25,11);
 	LCD_nokia_send_string("Board");
 }
-
 
 void terminal_playnote1(void)
 {

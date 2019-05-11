@@ -7,13 +7,15 @@
 #include "lcd_nokia.h"
 #include "bits.h"
 #include "terminal.h"
+#include "system.h"
+#include "pit.h"
 
-#define FSM_LCD_STATES 1
+#define FSM_LCD_STATES 13
 
 typedef struct
 {
 	uint8_t *bitmap; //Text string
-	terminal_config_state_t next[FSM_LCD_STATES]; //FSM terminal states
+	states_t next[FSM_LCD_STATES]; //FSM terminal states
 } FSM_LCD_t;
 
 void LCD_terminal_startup(void);

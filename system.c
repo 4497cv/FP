@@ -20,20 +20,17 @@ static boolean_t system_select;
 
 static FSM_terminal_t FSM_terminal[TERM_NUM_ST]=
 {
-	{terminal_menu_start,     {terminal_menu,   terminal_op1,     terminal_op2,   terminal_start}},
-	{terminal_menu_select0,   {terminal_op1,    terminal_op2,     terminal_op3,   terminal_op4}},
-	{terminal_menu_op1,       {terminal_op2,    terminal_op3,     terminal_op4,   terminal_op1}},
-	{terminal_menu_op2,       {terminal_op3,    terminal_op4,     terminal_op1,   terminal_op2}},
-	{terminal_menu_op3,       {terminal_op4,    terminal_op1,     terminal_op2,   terminal_op3}},
-	{terminal_menu_op4,       {terminal_op1,    terminal_op2,     terminal_op3,   terminal_op4}}
+	{terminal_menu_start,     {terminal_menu,   terminal_menu}},
+	{terminal_menu_select0,   {terminal_op1,    terminal_op2}},
+	{terminal_menu_op1,       {terminal_op2,    terminal_op1}},
+	{terminal_menu_op2,       {terminal_op1,    terminal_op2,}}
 };
 
-static FSM_system_t FSM_system[SYS_NUM_ST]=
+static FSM_system_t FSM_system[3]=
 {
-	{system_menu,			 {system_ClassicMode,  system_SimonMode,    system_PlayerBoard}},
-	{system_play_classic,    {system_SimonMode,    system_PlayerBoard,  system_ClassicMode}},
-	{system_play_SimonMode,  {system_PlayerBoard,  system_ClassicMode,    system_SimonMode}},
-	{system_player_board,    {system_ClassicMode,  system_SimonMode,    system_PlayerBoard}}
+	{system_menu,			 {system_ClassicMode,  system_ClassicMode,  system_ClassicMode}},
+	{system_play_classic,    {system_PlayerBoard,  system_ClassicMode}},
+	{system_player_board,    {system_ClassicMode,  system_PlayerBoard}}
 };
 
 void system_menu(void)
@@ -52,13 +49,9 @@ void system_menu(void)
 				/* classic mode */
 				current_term_st = terminal_op1;
 			break;
-			case system_SimonMode:
-				/* simon says mode */
-				current_term_st = terminal_op2;
-			break;
 			case system_PlayerBoard:
 				/* playerboard mode */
-				current_term_st = terminal_op4;
+				current_term_st = terminal_op2;
 			break;
 			default:
 			break;
@@ -84,11 +77,6 @@ void system_menu(void)
 
 void system_play_classic()
 {
-
-}
-
-void system_play_SimonMode()
-{
 	generate_sequence_buffer();
 }
 
@@ -107,11 +95,8 @@ void system_dynamic_select_handler(void)
 		case system_ClassicMode:
 			terminal_menu_select1();
 		break;
-		case system_SimonMode:
-			terminal_menu_select2();
-		break;
 		case system_PlayerBoard:
-			terminal_menu_select4();
+			terminal_menu_select2();
 		break;
 		default:
 		break;

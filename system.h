@@ -20,13 +20,14 @@
 #include "FlexTimer.h"
 
 #define SYSTEM_CLOCK (21000000U)
-#define SYS_NUM_ST 6
+#define DELAY (1.0F)
 
+#define SYS_NUM_ST 6
 
 typedef struct
 {
 	void(*fptr)(void);
-	system_state_t next[4];
+	system_state_t next[2];
 } FSM_system_t;
 
 

@@ -43,7 +43,7 @@ typedef struct
 typedef struct
 {
 	void(*fptr)(void);	//Text string
-	NoteBuffer_t next[TERM_NUM_ST]; //FSM terminal states
+	NoteBuffer_t next[5]; //FSM terminal states
 } TERM_playnotes_t;
 
 typedef struct

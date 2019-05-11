@@ -58,9 +58,25 @@ typedef enum
 	buffer_S5,
 	buffer_S6,
 	buffer_S7,
-	buffer_S8,
-	buffer_S9
+	buffer_S8
 } NoteBuffer_t;
+
+typedef enum
+{
+	S1,
+	S2,
+	S3,
+	S4,
+	S5,
+	S6,
+	S7,
+	S8,
+	S9,
+	S10,
+	S11,
+	S12,
+	S13
+} states_t;
 
 typedef enum
 {
@@ -103,8 +119,6 @@ typedef enum
 {
 	system_Menu,
 	system_ClassicMode,
-	system_SimonMode,
-	system_GuitarTuner,
 	system_PlayerBoard,
 } system_state_t;
 
