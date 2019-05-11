@@ -28,7 +28,7 @@ static FSM_terminal_t FSM_terminal[TERM_NUM_ST]=
 
 static FSM_system_t FSM_system[3]=
 {
-	{system_menu,			 {system_ClassicMode,  system_ClassicMode,  system_ClassicMode}},
+	{system_menu,			 {system_ClassicMode,  system_ClassicMode}},
 	{system_play_classic,    {system_PlayerBoard,  system_ClassicMode}},
 	{system_player_board,    {system_ClassicMode,  system_PlayerBoard}}
 };
@@ -45,6 +45,9 @@ void system_menu(void)
 	{
 		switch(current_system_select)
 		{
+			case system_Menu:
+				current_term_st = terminal_menu;
+			break;
 			case system_ClassicMode:
 				/* classic mode */
 				current_term_st = terminal_op1;
@@ -60,7 +63,11 @@ void system_menu(void)
 		/* call corresponding terminal function */
 		FSM_terminal[current_term_st].fptr();
 		/* call corresponding system function */
-		FSM_system[current_system_select].fptr();
+
+		if(current_system_select != system_Menu)
+		{
+			FSM_system[current_system_select].fptr();
+		}
 
 		toggle_start_flag();  //set start flag to false
 		toggle_select_flag(); //set select flag to false
@@ -176,7 +183,6 @@ void system_init()
 	/* Set the delay for the pit_1 */
 	PIT_delay(PIT_0, SYSTEM_CLOCK, DELAY);
 	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
 
 	/* ~~~~~~~~  ADC configuration ~~~~~~~~ */
 	ADC_init();
