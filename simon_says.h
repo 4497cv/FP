@@ -21,7 +21,7 @@
 #define SIMON_SEQUENCE 5
 #define BUFFER_SIZE    6
 #define BUFFER_LIMIT   5
-#define TIME_LIMIT 15
+#define TIME_LIMIT 30
 
 typedef enum
 {
@@ -56,13 +56,16 @@ typedef struct
 void generate_sequence_buffer(void);
 
 void get_sequence(uint8_t rand_number_t);
-
+void set_initial_state();
 void send_sequence_buzzer(void);
+
+void play_sequence();
 
 void SS_handle_user_input(void);
 void victory_buzzer(void);
 void handle_time_interrupt(void);
 uint8_t SS_note_convert_to_number(uint8_t keynote);
 void update_timeout_status_flag(void);
+boolean_t get_buzzer_end_flag_status(void);
 
 #endif /* SIMON_SAYS_H_ */

@@ -28,3 +28,8 @@ Hardware Used:
 > OP-AMPS TL082/TL083
 > Guitar Amplifier
 
+Callbacks configured
+> PIT 0: defines the beats per second to the sound
+> PIT 1: frequency sound
+> PIT 2: adc sampling
+> PIT 3: time interrupt

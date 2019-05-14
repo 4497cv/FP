@@ -84,12 +84,12 @@ void system_menu(void)
 
 void system_play_classic()
 {
-	/* start PIT for adc sampling @ 2kHz */
-	PIT_enable_interrupt(PIT_3);
-	/* start pit for time interrupt handler */
-	PIT_enable_interrupt(PIT_4);
-
+	boolean_t buzzer_flag_status;
 	generate_sequence_buffer();
+	/* start PIT for adc sampling @ 2kHz */
+	PIT_enable_interrupt(PIT_2);
+	/* start pit for time interrupt handler */
+	PIT_enable_interrupt(PIT_3);
 }
 
 void system_player_board()
@@ -187,11 +187,15 @@ void system_init()
 	PIT_enable();
 	/* Set the delay for the pit_1 */
 	PIT_delay(PIT_0, SYSTEM_CLOCK, DELAY);
+	PIT_delay(PIT_2, SYSTEM_CLOCK, 0.000833F); // @ 2 kHz
+	PIT_delay(PIT_3, SYSTEM_CLOCK, 1.0F);  // @ 1 Hz
+
 	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 	/* ~~~~~~~~  ADC configuration ~~~~~~~~ */
 	ADC_init();
 	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
 
 	/**Sets the threshold for interrupts, if the interrupt has higher priority constant that the BASEPRI, the interrupt will not be attended*/
 	NVIC_set_basepri_threshold(PRIORITY_10);
@@ -203,18 +207,18 @@ void system_init()
 	NVIC_enable_interrupt_and_priotity(PIT_CH0_IRQ, PRIORITY_6);
 	/*Activating the ISR for the PIT and set the priority*/
 	NVIC_enable_interrupt_and_priotity(PIT_CH1_IRQ, PRIORITY_6);
-
+	NVIC_enable_interrupt_and_priotity(PIT_CH2_IRQ, PRIORITY_6);
+	/*Activating the ISR for the PIT and set the priority*/
+	NVIC_enable_interrupt_and_priotity(PIT_CH3_IRQ, PRIORITY_3);
+	NVIC_global_enable_interrupts;
 	/*~~~~~~~~~~~~ CALLBACKS configuration ~~~~~~~~~~*/
 	/* Callbacks for PIT */
 	PIT_callback_init(PIT_0,send_sequence_buzzer);
 	/* Callbacks for sampling PIT */
-	PIT_callback_init(PIT_3, FREQ_get_current_note);
+	PIT_callback_init(PIT_2, FREQ_get_current_note);
 	/* Callbacks for time PIT */
-	PIT_callback_init(PIT_4, handle_time_interrupt);
+	PIT_callback_init(PIT_3, handle_time_interrupt);
 	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-	/* Enable NVIC Interrupts */
-	NVIC_global_enable_interrupts;
 
 	current_term_st = terminal_start;
 	FSM_terminal[current_term_st].fptr(); //invoke state's related function

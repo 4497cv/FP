@@ -18,7 +18,7 @@ int main(void)
 
 	while(1)
 	{
-		victory_buzzer();
+		//FREQ_get_current_note();
 	}
 
 	return 0;

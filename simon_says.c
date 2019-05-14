@@ -7,9 +7,10 @@ static uint8_t current_key;
 static uint8_t prev_key;
 static boolean_t key_flag;
 static uint8_t sequence_number;
-static booleant_t timeout_status_flag = FALSE;
-static NoteBuffer_t current_state;
+static boolean_t timeout_status_flag = FALSE;
+static NoteBuffer_t current_state = buffer_S1;
 static uint8_t seconds_g = 0;
+static boolean_t buzzer_end_flag;
 
 sequence_map_t sequence_map[SEQUENCE_SIZE] =
 {
@@ -50,7 +51,10 @@ void generate_sequence_buffer(void)
 
 	/* Update current global buffer */
 	get_sequence(sequence_number);
+}
 
+void play_sequence()
+{
 	/* Enable PIT #0 interrupt */
 	PIT_enable_interrupt(PIT_0);
 	/* Enable PIT #1 interrupt */
@@ -88,8 +92,6 @@ void send_sequence_buzzer(void)
 			PIT_disable_interrupt(PIT_1);
 
 			GPIO_clear_pin(GPIO_C,bit_5);
-
-			SS_handle_user_input();
 		}
 		else
 		{
@@ -99,13 +101,18 @@ void send_sequence_buzzer(void)
 	}
 }
 
+boolean_t get_buzzer_end_flag_status(void)
+{
+	return buzzer_end_flag;
+}
+
 void handle_time_interrupt(void)
 {
 	boolean_t victory_flag;
-	uint8_t key_number;
-	uint8_t current_key;
-	uint8_t note_index;
+	boolean_t note_found_flag;
 
+	update_current_note(*FSM_Buffer[current_state].key_number);
+	LCD_set_pentagram_sequence(sequence_number, current_state);
 	/* get note found flag status */
 	note_found_flag = get_note_found_flag();
 
@@ -113,10 +120,16 @@ void handle_time_interrupt(void)
 	{
 		/* send victory message to SPI */
 		terminal_correct_msg();
+		LCD_set_pentagram_sequence(sequence_number, *FSM_Buffer[current_state].key_number);
 		/* get game's next state status */
 		current_state = FSM_Buffer[current_state].next[0];
+		/* reset seconds */
+		seconds_g = 0;
 		/* indicate that the user has won */
-		victory_flag = TRUE;
+		if(current_state == buffer_S1)
+		{
+			victory_flag = TRUE;
+		}
 	}
 	else
 	{
@@ -128,11 +141,20 @@ void handle_time_interrupt(void)
 	{
 		/* send victory message to SPI */	
 		terminal_victory_msg();
+		/* start PIT for adc sampling @ 2kHz */
+		PIT_disable_interrupt(PIT_2);
+		/* start pit for time interrupt handler */
+		PIT_disable_interrupt(PIT_3);
+
 	}
 	else if((FALSE == victory_flag) && (TRUE == timeout_status_flag))
 	{
 		/* send losing message to SPI */
 		terminal_game_over_msg();
+		/* start PIT for adc sampling @ 2kHz */
+		PIT_disable_interrupt(PIT_2);
+		/* start pit for time interrupt handler */
+		PIT_disable_interrupt(PIT_3);
 	}
 	else
 	{
@@ -146,10 +168,12 @@ void update_timeout_status_flag(void)
 {
 	if(TIME_LIMIT == seconds_g)
 	{
+		/* indicate time out if it reached its limit */
 		timeout_status_flag = TRUE;
 	}
 	else
 	{
+		/* indicate time has not run out */
 		timeout_status_flag = FALSE;
 	}	
 }

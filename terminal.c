@@ -15,6 +15,7 @@
 void terminal_menu_start(void)
 {
 	LCD_terminal_startup();
+	terminal_press_start_msg();
 }
 
 void terminal_menu_select0(void)
@@ -142,4 +143,10 @@ void terminal_correct_msg(void)
 	LCD_nokia_clear();
 	LCD_nokia_goto_xy(0,10);
 	LCD_nokia_send_string("Correct!");
+}
+
+void terminal_press_start_msg(void)
+{
+	LCD_nokia_goto_xy(5,45);
+	LCD_nokia_send_string("Press start");
 }
