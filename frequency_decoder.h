@@ -63,8 +63,10 @@
 #define C2_3 5
 #define C2_4 8
 
-#define NSAMPLES 200
+#define NSAMPLES 300
 #define KEYMAP_SIZE 7
+#define NSHIFT 4
+#define DECIMAL_SHIFT 10
 
 typedef struct
 {
@@ -75,7 +77,7 @@ typedef struct
    uint8_t nano;
 } Keymap_t;
 
-boolean_t FREQ_get_current_note(uint8_t note_number);
+void FREQ_get_current_note(void);
 
 uint8_t FREQ_decode_voltage(uint8_t voltage_string[STRING_MAX]);
 
@@ -84,5 +86,9 @@ void FREQ_show_current_voltage(uint8_t voltage_string[STRING_MAX]);
 void FREQ_voltage_drop();
 
 void notedetector();
+
+void update_note_found_flag_status(void);
+
+uint8_t get_note_found_flag(void);
 
 #endif /* FREQUENCY_DECODER_H_ */

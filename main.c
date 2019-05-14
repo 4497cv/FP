@@ -10,6 +10,7 @@
 
 #include "system.h"
 #include "lcd_nokia_images.h"
+#include "simon_says.h"
 
 int main(void)
 {
@@ -17,7 +18,7 @@ int main(void)
 
 	while(1)
 	{
-
+		victory_buzzer();
 	}
 
 	return 0;

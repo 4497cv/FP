@@ -84,6 +84,11 @@ void system_menu(void)
 
 void system_play_classic()
 {
+	/* start PIT for adc sampling @ 2kHz */
+	PIT_enable_interrupt(PIT_3);
+	/* start pit for time interrupt handler */
+	PIT_enable_interrupt(PIT_4);
+
 	generate_sequence_buffer();
 }
 
@@ -198,8 +203,16 @@ void system_init()
 	NVIC_enable_interrupt_and_priotity(PIT_CH0_IRQ, PRIORITY_6);
 	/*Activating the ISR for the PIT and set the priority*/
 	NVIC_enable_interrupt_and_priotity(PIT_CH1_IRQ, PRIORITY_6);
-	/** Callbacks for PIT */
+
+	/*~~~~~~~~~~~~ CALLBACKS configuration ~~~~~~~~~~*/
+	/* Callbacks for PIT */
 	PIT_callback_init(PIT_0,send_sequence_buzzer);
+	/* Callbacks for sampling PIT */
+	PIT_callback_init(PIT_3, FREQ_get_current_note);
+	/* Callbacks for time PIT */
+	PIT_callback_init(PIT_4, handle_time_interrupt);
+	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
 	/* Enable NVIC Interrupts */
 	NVIC_global_enable_interrupts;
 

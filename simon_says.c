@@ -1,14 +1,15 @@
 
 #include "simon_says.h"
 
-//#define DEBUG
-
 static uint8_t buffer_sequence[SIMON_SEQUENCE] = {0};
 static boolean_t sequence_complete_g;
 static uint8_t current_key;
 static uint8_t prev_key;
 static boolean_t key_flag;
 static uint8_t sequence_number;
+static booleant_t timeout_status_flag = FALSE;
+static NoteBuffer_t current_state;
+static uint8_t seconds_g = 0;
 
 sequence_map_t sequence_map[SEQUENCE_SIZE] =
 {
@@ -62,11 +63,8 @@ void get_sequence(uint8_t sequence_index)
 
 	for(i = 0; BUFFER_SIZE > i ; i++)
 	{
-		/* sequence */
+		/* update buffer sequence to global buffer */
 		buffer_sequence[i] = sequence_map[sequence_index].sequence_buffer[i];
-#ifdef DEBUG
-		printf("%c\n",buffer_sequence[i]);
-#endif
 	}
 }
 
@@ -101,89 +99,57 @@ void send_sequence_buzzer(void)
 	}
 }
 
-void SS_handle_user_input(void)
+void handle_time_interrupt(void)
 {
-	NoteBuffer_t current_state;
-	boolean_t correct_flag;
+	boolean_t victory_flag;
 	uint8_t key_number;
 	uint8_t current_key;
 	uint8_t note_index;
 
-	correct_flag = FALSE;
-	current_state = buffer_S1;
-	note_index = 0;
+	/* get note found flag status */
+	note_found_flag = get_note_found_flag();
 
-	do
+	if(note_found_flag)
 	{
-		/* wait until voltage drops to zero */
-		FREQ_voltage_drop();
-
-#ifdef DEBUG
-		printf("Play note #%i\n", note_index);
-#endif
-		FSM_term_playnotes[note_index].fptr();
-		LCD_set_pentagram_sequence(sequence_number, current_state);
-		key_flag = FREQ_get_current_note(*FSM_Buffer[current_state].key_number);
-
-		if(key_flag)
-		{
-			/* send victory message to SPI */
-			terminal_correct_msg();
-#ifdef DEBUG
-			printf("Correct!\n");
-#endif
-			/* get buffer's next state */
-			current_state = FSM_Buffer[current_state].next[0];
-			correct_flag = TRUE;
-		}
-		else
-		{
-			correct_flag = FALSE;
-			current_state = buffer_S1;
-		}
-		note_index++;
-	}while(buffer_S1 != current_state);
-
-
-	if(TRUE == correct_flag)
-	{
-		/* Send victory message to SPI */	
-		terminal_victory_msg();
-		#ifdef DEBUG
-			printf("you won!\n");
-		#endif
+		/* send victory message to SPI */
+		terminal_correct_msg();
+		/* get game's next state status */
+		current_state = FSM_Buffer[current_state].next[0];
+		/* indicate that the user has won */
+		victory_flag = TRUE;
 	}
 	else
 	{
-		/* Send losing message to SPI */
+		/* indicate that the user has lost */
+		victory_flag = FALSE;
+	}
+
+	if((TRUE == victory_flag) && (FALSE == timeout_status_flag))
+	{
+		/* send victory message to SPI */	
+		terminal_victory_msg();
+	}
+	else if((FALSE == victory_flag) && (TRUE == timeout_status_flag))
+	{
+		/* send losing message to SPI */
 		terminal_game_over_msg();
-		#ifdef DEBUG
-			printf("GAME OVER.\n");
-		#endif
+	}
+	else
+	{
+		/* increment seconds */
+		seconds_g++;
+		update_timeout_status_flag();
 	}
 }
 
-uint8_t SS_note_convert_to_number(uint8_t keynote)
+void update_timeout_status_flag(void)
 {
-	uint8_t key_number;
-	switch(keynote)
+	if(TIME_LIMIT == seconds_g)
 	{
-		case 'C':
-			key_number = DO;
-		break;
-		case 'D':
-			key_number = RE;
-		break;
-		case 'E':
-			key_number = MI;
-		break;
-		case 'G':
-			key_number = SOL;
-		break;
-		case 'A':
-			key_number = LA;
-		break;
+		timeout_status_flag = TRUE;
 	}
-
-	return key_number;
+	else
+	{
+		timeout_status_flag = FALSE;
+	}	
 }
