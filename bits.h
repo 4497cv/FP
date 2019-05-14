@@ -9,6 +9,7 @@
 #define BITS_H_
 
 #define NULL 0
+#define ZERO 0
 
 /*! This definition is as a general definitions to bits in regiter or pins in the microcontroller.*/
 typedef enum 
@@ -47,12 +48,57 @@ typedef enum
 	bit_31  /*!< Bit 31 */
 } BitsType;
 
+
+typedef enum
+{
+	buffer_S1,
+	buffer_S2,
+	buffer_S3,
+	buffer_S4,
+	buffer_S5,
+	buffer_S6,
+	buffer_S7,
+	buffer_S8
+} NoteBuffer_t;
+
+typedef enum
+{
+	S1,
+	S2,
+	S3,
+	S4,
+	S5,
+	S6,
+	S7,
+	S8,
+	S9,
+	S10,
+	S11,
+	S12,
+	S13
+} states_t;
+
+typedef enum
+{
+	SEQUENCE_ZERO,
+	SEQUENCE_ONE,
+	SEQUENCE_TWO,
+	SEQUENCE_THREE,
+	SEQUENCE_FOUR,
+	SEQUENCE_FIVE,
+	SEQUENCE_SIX,
+	SEQUENCE_SEVEN
+} sequence_enum_t;
+
+
 typedef enum
 {
 	terminal_start,
 	terminal_menu,
 	terminal_op1,
-	terminal_op2
+	terminal_op2,
+	terminal_op3,
+	terminal_op4
 } terminal_state_t;
 
 typedef enum
@@ -71,8 +117,8 @@ typedef enum
 
 typedef enum
 {
+	system_Menu,
 	system_ClassicMode,
-	system_GuitarTuner,
 	system_PlayerBoard,
 } system_state_t;
 
@@ -112,6 +158,16 @@ typedef enum
 	ASCII_DOT = 250
 }ASCII_type;
 
+typedef enum
+{
+	C = 67,
+	D = 68,
+	E = 69,
+	F = 70,
+	G = 71,
+	A = 65,
+	B = 66,
+} musical_notes;
 /** This enumeration defines the UART's ports to be used **/
 typedef enum {UART_0,UART_1,UART_2,UART_3,UART_4,UART_5} uart_channel_t;
 

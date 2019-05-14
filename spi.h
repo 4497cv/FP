@@ -108,6 +108,8 @@ typedef struct
 	spi_port_config_t spi_gpio_port;
 } spi_config_t;
 
+
+void SPI_init(const spi_config_t* SPI_Config);
 /*!
 	@brief      This function enables the clock module of the SPI by modifying
 		    the MDIS bits.

@@ -4,6 +4,8 @@
 
 static uint8_t g_pit_intr_flag = FALSE;
 
+static uint8_t g_pit_counter_t = 0;
+
 static pit_interrupt_flags_t pit_intr_status_flag = {FALSE};
 
 /*CALLBACKS ptr*/
@@ -214,3 +216,21 @@ void PIT_clear_interrupt_flag(PIT_timer_t pit_timer)
 	}
 }
 
+/**************************/
+void PIT_timer_counter(void)
+{
+
+	if(MAX_TIME_PASS > g_pit_counter_t)
+	{
+		g_pit_counter_t = 0;
+	}
+	else
+	{
+		g_pit_counter_t++;
+	}
+}
+
+uint8_t get_time_keep(void)
+{
+	return g_pit_counter_t;
+}

@@ -3,9 +3,11 @@
 	\brief	  This is the source file that contains the functions that display information by UART.
 
 	\authors: César Villarreal Hernández, ie707560
-	          José Luis Rodríguez Gutiérrez, ie705694
+	          Luís Fernando Rodríguez Gutiérrez, ie705694
 
 	\date	  03/05/2019
+
+	center coordinates 25,10
 */
 
 #include "terminal.h"
@@ -15,40 +17,129 @@ void terminal_menu_start(void)
 	LCD_terminal_startup();
 }
 
-void terminal_menu_select(void)
+void terminal_menu_select0(void)
 {
-//	terminal_config_state_t current_state;
-//
-//	current_state = terminal_S0; //set initial state
-//
-//	FSM_terminal_config_t FSM_terminal_menu[FSM_SELECT_SIZE]=
-//	{
-//		{"\033[2J", 				 {terminal_S1, terminal_S2, terminal_S3, terminal_S4, terminal_S5, terminal_S6, terminal_S7, terminal_S8, terminal_S0}},
-//		{"\033[0;30;41m", 			 {terminal_S2, terminal_S3, terminal_S4, terminal_S5, terminal_S6, terminal_S7, terminal_S8, terminal_S0, terminal_S1}},
-//		{"\033[2J", 	  			 {terminal_S3, terminal_S4, terminal_S5, terminal_S6, terminal_S7, terminal_S8, terminal_S0, terminal_S1, terminal_S2}},
-//		{"\033[0;47;40m",   		 {terminal_S4, terminal_S5, terminal_S6, terminal_S7, terminal_S8, terminal_S0, terminal_S1, terminal_S2, terminal_S3}},
-//		{"\033[10;10H" ,			 {terminal_S5, terminal_S6, terminal_S7, terminal_S8, terminal_S0, terminal_S1, terminal_S2, terminal_S3, terminal_S4}},
-//		{"1) Play classic mode\r",   {terminal_S6, terminal_S7, terminal_S8, terminal_S0, terminal_S1, terminal_S2, terminal_S3, terminal_S4, terminal_S5}},
-//		{"\033[11;10H",   			 {terminal_S7, terminal_S8, terminal_S0, terminal_S1, terminal_S2, terminal_S3, terminal_S4, terminal_S5, terminal_S6}},
-//		{"2) Guitar tuner \r", 	     {terminal_S8, terminal_S0, terminal_S1, terminal_S2, terminal_S3, terminal_S4, terminal_S5, terminal_S6, terminal_S7}},
-//		{"\033[14;10H",  			 {terminal_S0, terminal_S1, terminal_S2, terminal_S3, terminal_S4, terminal_S5, terminal_S6, terminal_S7, terminal_S8}}
-//	};
-//
-//	do
-//	{
-//		/* Send to terminal the state's current text */
-//		UART_put_string(UART_0, FSM_terminal_menu[current_state].setup_txt);
-//		/* get next state */
-//		current_state = FSM_terminal_menu[current_state].next[INDEX_INIT];
-//	}while(terminal_S0 != current_state); //repeat while all the states are completed
+	LCD_nokia_clear();
+	LCD_nokia_goto_xy(25,0);
+	LCD_nokia_send_string("MENU");
+	LCD_nokia_goto_xy(0,1);
+	LCD_nokia_send_string("------------");
+	LCD_nokia_goto_xy(0,2);
+	LCD_nokia_send_string("1)Classic ");
+	LCD_nokia_goto_xy(0,3);
+	LCD_nokia_send_string("2)Scores");
 }
+
+void terminal_menu_select1(void)
+{
+	LCD_nokia_clear();
+	LCD_nokia_goto_xy(25,0);
+	LCD_nokia_send_string("MENU");
+	LCD_nokia_goto_xy(0,1);
+	LCD_nokia_send_string("------------");
+	LCD_nokia_goto_xy(0,2);
+	LCD_nokia_send_string(" 1)Classic");
+	LCD_nokia_goto_xy(0,3);
+	LCD_nokia_send_string("2)Scores");
+}
+
+void terminal_menu_select2(void)
+{
+	LCD_nokia_clear();
+	LCD_nokia_goto_xy(25,0);
+	LCD_nokia_send_string("MENU");
+	LCD_nokia_goto_xy(0,1);
+	LCD_nokia_send_string("------------");
+	LCD_nokia_goto_xy(0,2);
+	LCD_nokia_send_string("1)Classic");
+	LCD_nokia_goto_xy(0,3);
+	LCD_nokia_send_string(" 2)Scores");
+}
+
 
 void terminal_menu_op1(void)
 {
-
+	LCD_nokia_clear();
+	LCD_set_frame();
+	LCD_nokia_goto_xy(15,10);
+	LCD_nokia_send_string("Classic");
+	LCD_nokia_goto_xy(25,11);
+	LCD_nokia_send_string("Mode");
 }
 
 void terminal_menu_op2(void)
 {
+	LCD_nokia_clear();
+	LCD_set_frame();
+	LCD_nokia_goto_xy(22,10);
+	LCD_nokia_send_string("Leader");
+	LCD_nokia_goto_xy(25,11);
+	LCD_nokia_send_string("Board");
+}
 
+void terminal_playnote1(void)
+{
+	LCD_nokia_clear();
+	LCD_nokia_goto_xy(0,10);
+	LCD_nokia_send_string("Play Note #1");
+}
+
+void terminal_playnote2(void)
+{
+	LCD_nokia_clear();
+	LCD_nokia_goto_xy(0,10);
+	LCD_nokia_send_string("Play Note #2");
+}
+
+void terminal_playnote3(void)
+{
+	LCD_nokia_clear();
+	LCD_nokia_goto_xy(0,10);
+	LCD_nokia_send_string("Play Note #3");
+}
+
+void terminal_playnote4(void)
+{
+	LCD_nokia_clear();
+	LCD_nokia_goto_xy(0,10);
+	LCD_nokia_send_string("Play Note #4");
+}
+
+void terminal_playnote5(void)
+{
+	LCD_nokia_clear();
+	LCD_nokia_goto_xy(0,10);
+	LCD_nokia_send_string("Play Note #5");
+}
+
+void terminal_VoltageDrop(void)
+{
+	LCD_nokia_clear();
+	LCD_nokia_goto_xy(22,10);
+	LCD_nokia_send_string("Waiting for");
+	LCD_nokia_goto_xy(25,11);
+	LCD_nokia_send_string("voltage");
+	LCD_nokia_goto_xy(25,11);
+	LCD_nokia_send_string("drop");
+}
+
+void terminal_victory_msg(void)
+{
+	LCD_nokia_clear();
+	LCD_nokia_goto_xy(0,10);
+	LCD_nokia_send_string("YOU WON!");
+}
+
+void terminal_game_over_msg(void)
+{
+	LCD_nokia_clear();
+	LCD_nokia_goto_xy(0,10);
+	LCD_nokia_send_string("GAME OVER :(");
+}
+
+void terminal_correct_msg(void)
+{
+	LCD_nokia_clear();
+	LCD_nokia_goto_xy(0,10);
+	LCD_nokia_send_string("Correct!");
 }

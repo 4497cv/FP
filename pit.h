@@ -16,6 +16,8 @@
 
 #define HALF 2
 
+#define MAX_TIME_PASS 15
+
 typedef float My_float_pit_t;
 
 /*! This enumerated constant are used to select the PIT to be used*/
@@ -123,6 +125,17 @@ void PIT_disable_interrupt(PIT_timer_t pit_timer);
  	 \return uint8_t flag status
  */
 void PIT_enable_interrupt(PIT_timer_t pit);
+
+/********************************************************************************************/
+/*!
+ 	 \brief	It keeps a track of the time passed by a counter
+
+ 	 \param[in]  void.
+ 	 \return void
+ */
+void PIT_timer_counter(void);
+
+uint8_t get_time_keep(void);
 
 
 #endif /* PIT_H_ */

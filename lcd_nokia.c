@@ -119,7 +119,7 @@ void LCD_nokia_init(void) {
 	GPIO_set_pin(GPIO_D, RESET_PIN);
 
 	LCD_nokia_write_byte(LCD_CMD, 0x21); //Tell LCD that extended commands follow
-	LCD_nokia_write_byte(LCD_CMD, 0xBF); //Set LCD Vop (Contrast): Try 0xB1(good @ 3.3V) or 0xBF if your display is too dark
+	LCD_nokia_write_byte(LCD_CMD, 0xB1); //Set LCD Vop (Contrast): Try 0xB1(good @ 3.3V) or 0xBF if your display is too dark
 	LCD_nokia_write_byte(LCD_CMD, 0x04); //Set Temp coefficent
 	LCD_nokia_write_byte(LCD_CMD, 0x14); //LCD bias mode 1:48: Try 0x13 or 0x14
 

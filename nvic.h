@@ -16,9 +16,12 @@
 
 /** enum type that defines the priority levels for the NVIC.
  * The highest priority is PRIORITY_0 and the lowest PRIORITY_15 */
-typedef enum {PRIORITY_0, PRIORITY_1, PRIORITY_2, PRIORITY_3, PRIORITY_4, PRIORITY_5, PRIORITY_6,
-			  PRIORITY_7, PRIORITY_8, PRIORITY_9, PRIORITY_10, PRIORITY_11, PRIORITY_12, PRIORITY_13,
-			  PRIORITY_14, PRIORITY_15 } priority_level_t;
+typedef enum
+{
+	PRIORITY_0, PRIORITY_1, PRIORITY_2, PRIORITY_3, PRIORITY_4, PRIORITY_5, PRIORITY_6,
+	PRIORITY_7, PRIORITY_8, PRIORITY_9, PRIORITY_10, PRIORITY_11, PRIORITY_12, PRIORITY_13,
+    PRIORITY_14, PRIORITY_15
+} priority_level_t;
 
 /** enum type that defines the IRQs for the NVIC.*/
 typedef enum {

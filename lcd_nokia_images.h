@@ -1,9 +1,4 @@
-/*
- * LCD_nokia_images.h
- *
- *  Created on: 25/09/2018
- *      Author: jlpe
- */
+
 
 #ifndef LCD_NOKIA_IMAGES_H_
 #define LCD_NOKIA_IMAGES_H_
@@ -12,16 +7,22 @@
 #include "lcd_nokia.h"
 #include "bits.h"
 #include "terminal.h"
+#include "system.h"
+#include "pit.h"
 
-#define FSM_LCD_STATES 1
+#define FSM_LCD_STATES 13
 
 typedef struct
 {
 	uint8_t *bitmap; //Text string
-	terminal_config_state_t next[FSM_LCD_STATES]; //FSM terminal states
+	states_t next[FSM_LCD_STATES]; //FSM terminal states
 } FSM_LCD_t;
 
 void LCD_terminal_startup(void);
+
+void LCD_set_frame(void);
+
+void LCD_set_pentagram_sequence(sequence_enum_t sequence_state, NoteBuffer_t note_state);
 
 #endif /* LCD_NOKIA_IMAGES_H_ */
 

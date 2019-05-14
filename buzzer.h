@@ -12,8 +12,7 @@
 #include "gpio.h"
 #include "pit.h"
 #include "simon_says.h"
-
-void buzzer_config(void);
+#include "system.h"
 
 void buzzer_update_freq(float delay);
 

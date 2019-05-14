@@ -251,4 +251,13 @@ uint8_t GPIO_get_irq_status(gpio_port_name_t gpio);
  */
 void GPIO_callback_init(gpio_port_name_t port_name,void (*handler)(void));
 
+boolean_t get_start_flag(void);
+
+boolean_t get_select_flag(void);
+
+void toggle_start_flag(void);
+
+void toggle_select_flag(void);
+
+
 #endif /* GPIO_H_ */

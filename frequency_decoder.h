@@ -10,11 +10,12 @@
 
 #include "adc.h"
 #include <stdio.h>
+#include "simon_says.h"
 
 #define STRING_MAX 5
 
 #define C1 1164
-#define D1 1423
+#define D1 1294
 #define E1 1552
 #define F1 1682
 #define G1 1811
@@ -28,9 +29,9 @@
 #define C1_4 4
 
 #define D1_1 1
-#define D1_2 4
-#define D1_3 2
-#define D1_4 3
+#define D1_2 2
+#define D1_3 9
+#define D1_4 4
 
 #define E1_1 1
 #define E1_2 5
@@ -38,9 +39,9 @@
 #define E1_4 2
 
 #define F1_1 1
-#define F1_2 6
-#define F1_3 8
-#define F1_4 2
+#define F1_2 9
+#define F1_3 4
+#define F1_4 1
 
 #define G1_1 1
 #define G1_2 8
@@ -62,22 +63,26 @@
 #define C2_3 5
 #define C2_4 8
 
-#define NSAMPLES 30
+#define NSAMPLES 200
 #define KEYMAP_SIZE 7
 
 typedef struct
 {
-   char key;
+   uint8_t key;
    uint8_t centi;
    uint8_t milli;
    uint8_t micro;
    uint8_t nano;
 } Keymap_t;
 
-void FREQ_READ();
+boolean_t FREQ_get_current_note(uint8_t note_number);
 
-uint8_t FREQ_get_notekey(uint8_t voltage_string[STRING_MAX]);
+uint8_t FREQ_decode_voltage(uint8_t voltage_string[STRING_MAX]);
 
-void FREQ_show_current_voltage();
+void FREQ_show_current_voltage(uint8_t voltage_string[STRING_MAX]);
+
+void FREQ_voltage_drop();
+
+void notedetector();
 
 #endif /* FREQUENCY_DECODER_H_ */

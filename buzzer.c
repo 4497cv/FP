@@ -1,16 +1,12 @@
 /*
- * buzzer.c
- *
- *  Created on: May 7, 2019
- *      Author: LuisFernando
- */
+	\file 	  buzzer.c
+	\brief:
+	\authors: César Villarreal Hernández, ie707560
+	          Luís Fernando Rodríguez Gutiérrez, ie705694
+	\date	  10/05/2019
+*/
 
 #include "buzzer.h"
-
-/* TODO: insert other definitions and declarations here. */
-
-#define SYSTEM_CLOCK (21000000U)
-#define DELAY (1.0F)
 
 const float freq_delay [7] =
 {
@@ -22,32 +18,6 @@ const float freq_delay [7] =
 	0.00227,	/*LA*/
 	0.00202		/*SI*/
 };
-
-void buzzer_config(void)
-{
-/*GPIO config*/
-	gpio_pin_control_register_t output_pit_config = GPIO_MUX1;
-
-	/**Pin control configuration of GPIOB pin0 as GPIO*/
-	GPIO_pin_control_register(GPIO_C,bit_5,&output_pit_config);
-
-	/**Assigns a safe value to the output pin*/
-	GPIO_set_pin(GPIO_C,bit_5);
-
-	/**Configures GPIOD pin0 as output*/
-	GPIO_data_direction_pin(GPIO_C,GPIO_OUTPUT,bit_5);
-
-	GPIO_clear_pin(GPIO_C,bit_5);
-
-/*PIT config*/
-	/**Activating the PIT clock gating*/
-	PIT_clock_gating();
-	/**Activating PIT*/
-	PIT_enable();
-
-	/*Set the delay for the pit_1*/
-	PIT_delay(PIT_0, SYSTEM_CLOCK, DELAY);
-}
 
 void buzzer_update_freq(float delay)
 {
@@ -62,28 +32,32 @@ void buzzer_toogle(void)
 
 void note_frequency(uint8_t index)
 {
+	uint8_t i;
+
 	switch(index)
 	{
-	case DO:
-		buzzer_update_freq(freq_delay[DO]);
+		case C:
+			i = 0;
 		break;
-	case RE:
-		buzzer_update_freq(freq_delay[RE]);
+		case D:
+			i = 1;
 		break;
-	case MI:
-		buzzer_update_freq(freq_delay[MI]);
+		case E:
+			i = 2;
 		break;
-	case FA:
-		buzzer_update_freq(freq_delay[FA]);
+		case F:
+			i = 3;
 		break;
-	case SOL:
-		buzzer_update_freq(freq_delay[SOL]);
+		case G:
+			i = 4;
 		break;
-	case LA:
-		buzzer_update_freq(freq_delay[LA]);
+		case A:
+			i = 5;
 		break;
-	case SI:
-		buzzer_update_freq(freq_delay[SI]);
+		case B:
+			i = 6;
 		break;
 	}
+
+	buzzer_update_freq(freq_delay[i]);
 }

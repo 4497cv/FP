@@ -11,7 +11,7 @@
  */
 
 #include "MK64F12.h"
-#include "GPIO.h"
+#include "gpio.h"
 
 /*CALLBACKS ptr*/
 static void (*gpio_A_callback)(void) = 0;
@@ -21,6 +21,9 @@ static void (*gpio_D_callback)(void) = 0;
 static void (*gpio_E_callback)(void) = 0;
 
 static gpio_interrupt_flags_t g_intr_status_flag = {0};
+
+static boolean_t system_set_start_flag;
+static boolean_t system_set_select_flag;
 
 /*CALLBACK INIT*/
 /*FuncrPtr to destFunct*/
@@ -75,6 +78,23 @@ void PORTB_IRQHandler(void)
 }
 void PORTC_IRQHandler(void)
 {
+	uint8_t pin_select = GPIO_read_pin(GPIO_C, bit_2);
+	uint8_t pin_start = GPIO_read_pin(GPIO_C, bit_3);
+
+	if(TRUE == pin_start)
+	{
+		system_set_start_flag = TRUE;
+	}
+	else if(TRUE == pin_select)
+	{
+		system_set_select_flag = TRUE;
+	}
+	else
+	{
+		system_set_start_flag =  FALSE;
+		system_set_select_flag = FALSE;
+	}
+
 	/*Set flag that it was pressed*/
 	g_intr_status_flag.flag_port_c = TRUE;
 	/*Callback if its used*/
@@ -84,6 +104,8 @@ void PORTC_IRQHandler(void)
 	}
 
 	GPIO_clear_interrupt(GPIO_C);
+
+	system_menu(); //CHANGE TO CALLBACKS
 }
 void PORTD_IRQHandler(void)
 {
@@ -431,3 +453,22 @@ void GPIO_data_direction_pin(gpio_port_name_t port_name, uint8_t state, uint8_t 
 	}
 }
 
+boolean_t get_start_flag(void)
+{
+	return system_set_start_flag;
+}
+
+boolean_t get_select_flag(void)
+{
+	return system_set_select_flag;
+}
+
+void toggle_start_flag(void)
+{
+	system_set_start_flag = FALSE;
+}
+
+void toggle_select_flag(void)
+{
+	system_set_select_flag = FALSE;
+}
