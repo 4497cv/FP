@@ -9,7 +9,8 @@ static boolean_t key_flag;
 static uint8_t sequence_number;
 static boolean_t timeout_status_flag = FALSE;
 static NoteBuffer_t current_state = buffer_S1;
-static uint8_t seconds_g = 0;
+static volatile uint8_t seconds_g = 0;
+static volatile uint8_t time_g = 0;
 static boolean_t buzzer_end_flag;
 
 sequence_map_t sequence_map[SEQUENCE_SIZE] =
@@ -46,8 +47,6 @@ void generate_sequence_buffer(void)
 {
     sequence_number = FTM_get_counter_reg();
 	sequence_complete_g = FALSE;
-
-	printf("Sequence #%d:\n", sequence_number);
 
 	/* Update current global buffer */
 	get_sequence(sequence_number);
@@ -115,7 +114,6 @@ void handle_time_interrupt(void)
 	/* get note found flag status */
 	note_found_flag = get_note_found_flag();
 
-
 	if(note_found_flag)
 	{
 		/* send victory message to SPI */
@@ -146,6 +144,8 @@ void handle_time_interrupt(void)
 		PIT_disable_interrupt(PIT_2);
 		/* start pit for time interrupt handler */
 		PIT_disable_interrupt(PIT_3);
+		terminal_enter_your_initials();
+		system_user_record_capture(time_g);
 
 	}
 	else if((FALSE == victory_flag) && (TRUE == timeout_status_flag))
@@ -156,10 +156,14 @@ void handle_time_interrupt(void)
 		PIT_disable_interrupt(PIT_2);
 		/* start pit for time interrupt handler */
 		PIT_disable_interrupt(PIT_3);
+		set_playerboard_flag();
+		terminal_enter_your_initials();
+		system_user_record_capture(time_g);
 	}
 	else
 	{
 		/* increment seconds */
+		time_g++;
 		seconds_g++;
 		update_timeout_status_flag();
 	}
@@ -206,4 +210,16 @@ void victory_sound()
 			GPIO_clear_pin(GPIO_C,bit_5);
 		}
 	}
+}
+
+uint8_t get_time_g()
+{
+	return time_g;
+}
+
+void reset_game_timeout()
+{
+	seconds_g = 0;
+	time_g = 0;
+	timeout_status_flag = FALSE;
 }

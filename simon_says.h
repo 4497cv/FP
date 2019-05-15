@@ -21,7 +21,7 @@
 #define SIMON_SEQUENCE 5
 #define BUFFER_SIZE    6
 #define BUFFER_LIMIT   5
-#define TIME_LIMIT 30
+#define TIME_LIMIT 5
 
 typedef enum
 {
@@ -68,5 +68,7 @@ uint8_t SS_note_convert_to_number(uint8_t keynote);
 void update_timeout_status_flag(void);
 boolean_t get_buzzer_end_flag_status(void);
 void victory_sound();
+uint8_t get_time_g();
+void reset_game_timeout();
 
 #endif /* SIMON_SAYS_H_ */

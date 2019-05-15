@@ -62,6 +62,8 @@ void system_select_next_op();
 
 void system_set_start();
 
+void system_user_record_capture();
+
 void reset_menu();
 
 #endif /* SYSTEM_H_ */

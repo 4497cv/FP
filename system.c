@@ -20,6 +20,7 @@ static boolean_t system_select;
 static letter_t letter_value = SECOND_LETTER;
 static uint8_t letter_ascii;
 static uint8_t global_username[3];
+
 static FSM_terminal_t FSM_terminal[TERM_NUM_ST]=
 {
 	{terminal_menu_start,     {terminal_menu,   terminal_menu}},
@@ -57,7 +58,6 @@ void system_menu(void)
 			case system_PlayerBoard:
 				/* playerboard mode */
 				current_term_st = terminal_op2;
-				set_playerboard_flag();
 			break;
 			default:
 			break;
@@ -95,12 +95,15 @@ void system_play_classic()
 	PIT_enable_interrupt(PIT_3);
 }
 
-void system_player_board()
+void system_user_record_capture()
 {
+	static uint8_t sys_time;
 	/* get current start state */
 	system_start = get_start_flag();
 	/* get current select state */
 	system_select = get_select_flag();
+
+	sys_time = get_time_g();
 
 	if(TRUE == system_select)
 	{
@@ -108,7 +111,6 @@ void system_player_board()
 		switch(letter_value)
 		{
 			case FIRST_LETTER:
-				terminal_enter_your_initials();
 				LCD_nokia_goto_xy(25,20);
 				LCD_nokia_send_char(letter_ascii);
 			break;
@@ -131,16 +133,20 @@ void system_player_board()
 			case FIRST_LETTER:
 				letter_value = SECOND_LETTER;
 				global_username[FIRST_LETTER] = letter_ascii-1;
+				letter_ascii = 64;
 			break;
 			case SECOND_LETTER:
 				letter_value = THIRD_LETTER;
 				global_username[SECOND_LETTER] = letter_ascii-1;
+				letter_ascii = 64;
 			break;
 			case THIRD_LETTER:
-				global_username[THIRD_LETTER] = letter_ascii-1;
 				letter_value = SCORE_SAVED;
+				global_username[THIRD_LETTER] = letter_ascii-1;
+				letter_ascii = 64;
 			case SCORE_SAVED:
 				terminal_score_saved();
+				eeprom_store_record(global_username, sys_time);
 				reset_menu();
 			break;
 			default:
@@ -149,16 +155,21 @@ void system_player_board()
 	}
 
 
-	if((letter_ascii >= 65) && (letter_ascii < 90))
+	if((letter_ascii >= 64) && (letter_ascii < 90))
 	{
 		letter_ascii++;
 	}else
 	{
-		letter_ascii = 65;
+		letter_ascii = 64;
 	}
 
 	toggle_start_flag();  //set start flag to false
-	toggle_select_flag(); //set select flag to false
+	toggle_select_flag(); //set select flag to false	
+}
+
+void system_player_board()
+{
+
 }
 
 void system_dynamic_select_handler(void)
@@ -260,7 +271,6 @@ void system_init()
 	ADC_init();
 	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-
 	/**Sets the threshold for interrupts, if the interrupt has higher priority constant that the BASEPRI, the interrupt will not be attended*/
 	NVIC_set_basepri_threshold(PRIORITY_10);
 	/**Enables and sets a particular interrupt and its priority*/
@@ -289,7 +299,7 @@ void system_init()
 
 	current_term_st = FSM_terminal[current_term_st].next[0]; //set initial terminal state (display menu)
 	current_system_select = system_Menu; //set state pointer to classic mode
-	letter_ascii = 65;
+	letter_ascii = 64;
 	letter_value = FIRST_LETTER;
 }
 
@@ -297,9 +307,10 @@ void reset_menu()
 {
 	FSM_terminal[terminal_menu].fptr();
 	current_system_select = system_Menu; //set state pointer to classic mode
-	letter_ascii = 65;
+	letter_ascii = 64;
 	letter_value = FIRST_LETTER;
 	toggle_playerboard_flag();
+	reset_game_timeout();
 }
 
 

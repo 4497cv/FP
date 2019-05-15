@@ -111,7 +111,7 @@ void PORTC_IRQHandler(void)
 
 	if(TRUE == playerboard_select)
 	{
-		system_player_board(); //CHANGE TO CALLBACKS
+		system_user_record_capture(); //CHANGE TO CALLBACKS
 	}
 	else
 	{
