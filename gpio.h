@@ -259,5 +259,9 @@ void toggle_start_flag(void);
 
 void toggle_select_flag(void);
 
+boolean_t get_playerboard_flag();
+
+void set_playerboard_flag();
+void toggle_playerboard_flag();
 
 #endif /* GPIO_H_ */

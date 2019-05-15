@@ -75,7 +75,20 @@ typedef enum
 	S10,
 	S11,
 	S12,
-	S13
+	S13,
+	S14,
+	S15,
+	S16,
+	S17,
+	S18,
+	S19,
+	S20,
+	S21,
+	S22,
+	S23,
+	S24,
+	S25,
+	S26
 } states_t;
 
 typedef enum

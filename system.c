@@ -17,7 +17,9 @@ static terminal_state_t current_term_st; //current  terminal state
 static system_state_t current_system_select;
 static boolean_t system_start;
 static boolean_t system_select;
-
+static letter_t letter_value = SECOND_LETTER;
+static uint8_t letter_ascii;
+static uint8_t global_username[3];
 static FSM_terminal_t FSM_terminal[TERM_NUM_ST]=
 {
 	{terminal_menu_start,     {terminal_menu,   terminal_menu}},
@@ -55,6 +57,7 @@ void system_menu(void)
 			case system_PlayerBoard:
 				/* playerboard mode */
 				current_term_st = terminal_op2;
+				set_playerboard_flag();
 			break;
 			default:
 			break;
@@ -64,7 +67,7 @@ void system_menu(void)
 		FSM_terminal[current_term_st].fptr();
 		/* call corresponding system function */
 
-		if(current_system_select != system_Menu)
+		if(system_Menu != current_system_select)
 		{
 			FSM_system[current_system_select].fptr();
 		}
@@ -84,12 +87,78 @@ void system_menu(void)
 
 void system_play_classic()
 {
+	boolean_t buzzer_flag_status;
 	generate_sequence_buffer();
+	/* start PIT for adc sampling @ 2kHz */
+	PIT_enable_interrupt(PIT_2);
+	/* start pit for time interrupt handler */
+	PIT_enable_interrupt(PIT_3);
 }
 
 void system_player_board()
 {
+	/* get current start state */
+	system_start = get_start_flag();
+	/* get current select state */
+	system_select = get_select_flag();
 
+	if(TRUE == system_select)
+	{
+		//global_username
+		switch(letter_value)
+		{
+			case FIRST_LETTER:
+				terminal_enter_your_initials();
+				LCD_nokia_goto_xy(25,20);
+				LCD_nokia_send_char(letter_ascii);
+			break;
+			case SECOND_LETTER:
+				LCD_nokia_goto_xy(35,20);
+				LCD_nokia_send_char(letter_ascii);
+			break;
+			case THIRD_LETTER:
+				LCD_nokia_goto_xy(45,20);
+				LCD_nokia_send_char(letter_ascii);
+			break;
+			default:
+			break;
+		}
+	}
+	else if(TRUE == system_start)
+	{
+		switch(letter_value)
+		{
+			case FIRST_LETTER:
+				letter_value = SECOND_LETTER;
+				global_username[FIRST_LETTER] = letter_ascii-1;
+			break;
+			case SECOND_LETTER:
+				letter_value = THIRD_LETTER;
+				global_username[SECOND_LETTER] = letter_ascii-1;
+			break;
+			case THIRD_LETTER:
+				global_username[THIRD_LETTER] = letter_ascii-1;
+				letter_value = SCORE_SAVED;
+			case SCORE_SAVED:
+				terminal_score_saved();
+				reset_menu();
+			break;
+			default:
+			break;
+		}
+	}
+
+
+	if((letter_ascii >= 65) && (letter_ascii < 90))
+	{
+		letter_ascii++;
+	}else
+	{
+		letter_ascii = 65;
+	}
+
+	toggle_start_flag();  //set start flag to false
+	toggle_select_flag(); //set select flag to false
 }
 
 void system_dynamic_select_handler(void)
@@ -182,11 +251,15 @@ void system_init()
 	PIT_enable();
 	/* Set the delay for the pit_1 */
 	PIT_delay(PIT_0, SYSTEM_CLOCK, DELAY);
+	PIT_delay(PIT_2, SYSTEM_CLOCK, 0.1F); // @ 2 kHz
+	PIT_delay(PIT_3, SYSTEM_CLOCK, 1.0F);  // @ 1 Hz
+
 	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 	/* ~~~~~~~~  ADC configuration ~~~~~~~~ */
 	ADC_init();
 	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
 
 	/**Sets the threshold for interrupts, if the interrupt has higher priority constant that the BASEPRI, the interrupt will not be attended*/
 	NVIC_set_basepri_threshold(PRIORITY_10);
@@ -195,19 +268,38 @@ void system_init()
 	/* Set PORT C interrupt priority */
 	NVIC_enable_interrupt_and_priotity(PORTC_IRQ, PRIORITY_5);
 	/*Activating the ISR for the PIT and set the priority*/
-	NVIC_enable_interrupt_and_priotity(PIT_CH0_IRQ, PRIORITY_6);
+	NVIC_enable_interrupt_and_priotity(PIT_CH0_IRQ, PRIORITY_4);
 	/*Activating the ISR for the PIT and set the priority*/
-	NVIC_enable_interrupt_and_priotity(PIT_CH1_IRQ, PRIORITY_6);
-	/** Callbacks for PIT */
-	PIT_callback_init(PIT_0,send_sequence_buzzer);
-	/* Enable NVIC Interrupts */
+	NVIC_enable_interrupt_and_priotity(PIT_CH1_IRQ, PRIORITY_5);
+	NVIC_enable_interrupt_and_priotity(PIT_CH2_IRQ, PRIORITY_3);
+	/*Activating the ISR for the PIT and set the priority*/
+	NVIC_enable_interrupt_and_priotity(PIT_CH3_IRQ, PRIORITY_2);
 	NVIC_global_enable_interrupts;
+	/*~~~~~~~~~~~~ CALLBACKS configuration ~~~~~~~~~~*/
+	/* Callbacks for PIT */
+	PIT_callback_init(PIT_0,send_sequence_buzzer);
+	/* Callbacks for sampling PIT */
+	PIT_callback_init(PIT_2, FREQ_get_current_note);
+	/* Callbacks for time PIT */
+	PIT_callback_init(PIT_3, handle_time_interrupt);
+	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 	current_term_st = terminal_start;
 	FSM_terminal[current_term_st].fptr(); //invoke state's related function
 
 	current_term_st = FSM_terminal[current_term_st].next[0]; //set initial terminal state (display menu)
 	current_system_select = system_Menu; //set state pointer to classic mode
+	letter_ascii = 65;
+	letter_value = FIRST_LETTER;
+}
+
+void reset_menu()
+{
+	FSM_terminal[terminal_menu].fptr();
+	current_system_select = system_Menu; //set state pointer to classic mode
+	letter_ascii = 65;
+	letter_value = FIRST_LETTER;
+	toggle_playerboard_flag();
 }
 
 

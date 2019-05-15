@@ -145,6 +145,7 @@ void PIT_enable(void)
 	PIT->MCR  |= PIT_MCR_FRZ_MASK;
 	PIT->MCR &= ~PIT_MCR_MDIS_MASK; /* Enable PIT*/
 }
+
 void PIT_disable_interrupt(PIT_timer_t pit_timer)
 {
 	PIT->CHANNEL[pit_timer].TCTRL = MASK_PIT_DISABLE;//disable interuptions

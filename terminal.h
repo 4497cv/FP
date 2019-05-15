@@ -64,5 +64,8 @@ void terminal_VoltageDrop(void);
 void terminal_victory_msg(void);
 void terminal_game_over_msg(void);
 void terminal_correct_msg(void);
+void terminal_press_start_msg(void);
+void terminal_enter_your_initials(void);
+void terminal_score_saved();
 
 #endif /* UART_TERM_H_ */

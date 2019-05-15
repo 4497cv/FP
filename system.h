@@ -30,6 +30,13 @@ typedef struct
 	system_state_t next[2];
 } FSM_system_t;
 
+typedef enum
+{
+	FIRST_LETTER,
+	SECOND_LETTER,
+	THIRD_LETTER,
+	SCORE_SAVED
+} letter_t;
 
 void system_init(void);
 
@@ -54,5 +61,7 @@ void system_player_board();
 void system_select_next_op();
 
 void system_set_start();
+
+void reset_menu();
 
 #endif /* SYSTEM_H_ */
