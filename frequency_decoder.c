@@ -12,8 +12,6 @@
 */
 
 #include "frequency_decoder.h"
-
-static uint16_t sample_counter = 0;
 static float highest_val = 0;
 static boolean_t note_found_f = FALSE;
 static uint8_t current_note_g;
@@ -75,19 +73,17 @@ void FREQ_get_current_note(void)
 		cadena[index] = temp;
 	}while(index < 5);
 
-
 	/* get current key note*/
-	key = FREQ_decode_voltage(cadena);
+	key = FREQ_decode_voltage(cadena[0], cadena[1], cadena[2], cadena[3]);
 
+	//printf("%c\n", key);
 
 	//FREQ_show_current_voltage(cadena);
-	//printf("%c\n", key);
+
 	/* verify if the note played coincides with current note status value */
 	update_note_found_flag_status(key);
-
-	sample_counter++;
-
 }
+
 
 void update_highest_voltage_value(uint8_t voltage_val)
 {
@@ -119,7 +115,7 @@ uint8_t get_note_found_flag(void)
 	return note_found_f;
 }
 
-uint8_t FREQ_decode_voltage(uint8_t voltage_string[STRING_MAX])
+uint8_t FREQ_decode_voltage(uint8_t voltage_string0, uint8_t voltage_string1, uint8_t voltage_string2,uint8_t voltage_string3)
 {
 	uint8_t i;
 	uint8_t index;
@@ -131,10 +127,9 @@ uint8_t FREQ_decode_voltage(uint8_t voltage_string[STRING_MAX])
 
 	for(i=0; i < KEYMAP_SIZE; i++)
 	{
-		if((key_map[i].centi == voltage_string[1]) &&
-		   (key_map[i].milli == voltage_string[2]) &&
-		   (key_map[i].micro == voltage_string[3]) &&
-		   (key_map[i].nano == voltage_string[4]))
+		if((key_map[i].centi == voltage_string1) &&
+		   (key_map[i].milli == voltage_string2) &&
+		   (key_map[i].micro == voltage_string3))
 		{
 			index = i;
 			notfound_flag = FALSE;

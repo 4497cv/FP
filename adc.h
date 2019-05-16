@@ -21,8 +21,19 @@
 #define ANALOG_LIMIT 3.3F
 #define DIGITAL_LIMIT 255
 
+/*\brief Funct to initialize the SE_ADC
+ *\param[add] void
+ * */
 void ADC_init(void);
+
+/*\brief Funct used to get direct values from adc by the registers
+ *\param[add] void
+ * */
 uint8_t ADC_result(void);
+
+/*\brief Funct used to return the value read on the ADC and used them later
+ *\param[add] void
+ * */
 uint8_t ADC_read(void);
 
 #endif

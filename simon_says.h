@@ -53,22 +53,74 @@ typedef struct
 	musical_notes sequence_buffer[SIMON_SEQUENCE];
 }sequence_map_t;
 
+/*\brief Funct that send to the buzzer the sequence so the player can hear it too
+ *\param[add] void
+ * */
 void generate_sequence_buffer(void);
 
+/*\brief Funct to get a rand sequence using the FTM
+ *\param[add] rand_number_t
+ * */
 void get_sequence(uint8_t rand_number_t);
-void set_initial_state();
+
+/*\brief
+ *\param[add] void
+ * */
+void set_initial_state(void);
+
+/*\brief
+ *\param[add] void
+ * */
 void send_sequence_buzzer(void);
 
-void play_sequence();
+/*\brief Funct to play the sequence to be played
+ *\param[add] void
+ * */
+void play_sequence(void);
 
+/*\brief
+ *\param[add] void
+ * */
 void SS_handle_user_input(void);
+
+/*\brief Funct to send a victory song or noise for the user
+ *\param[add] void
+ * */
 void victory_buzzer(void);
+
+/*\brief
+ *\param[add] void
+ * */
 void handle_time_interrupt(void);
+
+/*\brief
+ *\param[add] keynote
+ * */
 uint8_t SS_note_convert_to_number(uint8_t keynote);
+
+/*\brief
+ *\param[add] void
+ * */
 void update_timeout_status_flag(void);
+
+/*\brief
+ *\param[add] void
+ * */
 boolean_t get_buzzer_end_flag_status(void);
-void victory_sound();
-uint8_t get_time_g();
-void reset_game_timeout();
+
+/*\brief
+ *\param[add] void
+ * */
+void victory_sound(void);
+
+/*\brief
+ *\param[add] void
+ * */
+uint8_t get_time_g(void);
+
+/*\brief
+ *\param[add] void
+ * */
+void reset_game_timeout(void);
 
 #endif /* SIMON_SAYS_H_ */

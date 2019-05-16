@@ -18,9 +18,15 @@
 #include "spi.h"
 #include "buzzer.h"
 #include "FlexTimer.h"
+#include "i2c.h"
+#include "eeprom.h"
 
 #define SYSTEM_CLOCK (21000000U)
 #define DELAY (1.0F)
+
+#define EEPROM_USER_ADDRESS_ONE   0x00U
+#define EEPROM_USER_ADDRESS_TWO   0x06U
+#define EEPROM_USER_ADDRESS_THREE 0x12U
 
 #define SYS_NUM_ST 6
 
@@ -38,32 +44,74 @@ typedef enum
 	SCORE_SAVED
 } letter_t;
 
+/*\brief All system initialitation
+ *\param[add] void
+ * */
 void system_init(void);
 
+/*\brief Funct for the menu of the system
+ *\param[add] void
+ * */
 void system_menu(void);
 
+/*\brief SPI funct for the classic mode (GAME MODE)
+ *\param[add] void
+ * */
 void system_play_classic(void);
 
+/*\brief
+ *\param[add] void
+ * */
 void system_play_SimonMode(void);
 
+/*\brief
+ *\param[add] void
+ * */
 void system_guitar_tuner(void);
 
-void system_dynamic_select_handler();
+/*\brief
+ *\param[add] void
+ * */
+void system_dynamic_select_handler(void);
 
+/*\brief
+ *\param[add] void
+ * */
 boolean_t get_menu_select_flag(uint8_t mailbox_value);
 
+/*\brief
+ *\param[add] void
+ * */
 boolean_t valid_menu_select(uint8_t mailbox_value);
 
+/*\brief
+ *\param[add] void
+ * */
 void system_fsm_handler(void);
 
-void system_player_board();
+/*\brief Func to access the scores in the SPI
+ *\param[add] void
+ * */
+void system_player_board(void);
 
-void system_select_next_op();
+/*\brief Funct used to select the next operation that the state machin will need to point
+ *\param[add] void
+ * */
+void system_select_next_op(void);
 
-void system_set_start();
+/*\brief Funct that gets the ISR for the interruption for access a certain funct
+ *\param[add] void
+ * */
+void system_set_start(void);
 
-void system_user_record_capture();
+/*\brief Funct that will set the pointer to the functs needed to store the score in the eeprom
+ *\param[add] void
+ * */
+void system_user_record_capture(uint8_t time_g);
 
-void reset_menu();
+/*\brief Funct to go back to the main menu
+ *\param[add] void
+ * */
+void reset_menu(void);
 
 #endif /* SYSTEM_H_ */

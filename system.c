@@ -89,15 +89,17 @@ void system_play_classic()
 {
 	boolean_t buzzer_flag_status;
 	generate_sequence_buffer();
+	PIT_enable_interrupt(PIT_0);
 	/* start PIT for adc sampling @ 2kHz */
 	PIT_enable_interrupt(PIT_2);
 	/* start pit for time interrupt handler */
 	PIT_enable_interrupt(PIT_3);
+	send_sequence_buzzer();
 }
 
-void system_user_record_capture()
+void system_user_record_capture(uint8_t sys_time)
 {
-	static uint8_t sys_time;
+	static eeprom_index;
 	/* get current start state */
 	system_start = get_start_flag();
 	/* get current select state */
@@ -133,20 +135,34 @@ void system_user_record_capture()
 			case FIRST_LETTER:
 				letter_value = SECOND_LETTER;
 				global_username[FIRST_LETTER] = letter_ascii-1;
+				/**/
+				//eeprom_index = EEPROM_USER_ADDRESS_ONE;
+				//EEPROM_write_mem(eeprom_index,letter_ascii-1);
+				//eeprom_index++;
+				/**/
 				letter_ascii = 64;
 			break;
 			case SECOND_LETTER:
 				letter_value = THIRD_LETTER;
 				global_username[SECOND_LETTER] = letter_ascii-1;
+				/**/
+				//EEPROM_write_mem(eeprom_index,letter_ascii-1);
+				//eeprom_index++;
+				/**/
 				letter_ascii = 64;
 			break;
 			case THIRD_LETTER:
 				letter_value = SCORE_SAVED;
 				global_username[THIRD_LETTER] = letter_ascii-1;
+				/**/
+				//EEPROM_write_mem(eeprom_index,letter_ascii-1);
+				//eeprom_index++;
+				/**/
 				letter_ascii = 64;
 			case SCORE_SAVED:
 				terminal_score_saved();
 				eeprom_store_record(global_username, sys_time);
+				/*Funcion para guardar tiempo*/
 				reset_menu();
 			break;
 			default:
@@ -169,7 +185,7 @@ void system_user_record_capture()
 
 void system_player_board()
 {
-
+	terminal_user_score();
 }
 
 void system_dynamic_select_handler(void)
@@ -181,6 +197,7 @@ void system_dynamic_select_handler(void)
 		break;
 		case system_ClassicMode:
 			terminal_menu_select1();
+			send_sequence_buzzer();
 		break;
 		case system_PlayerBoard:
 			terminal_menu_select2();
@@ -199,6 +216,8 @@ void system_init()
 {
 	gpio_pin_control_register_t button_config = GPIO_MUX1 | GPIO_PS | GPIO_PE | INTR_FALLING_EDGE;
 	gpio_pin_control_register_t output_pit_config = GPIO_MUX1;
+	/*PCR config*/
+	gpio_pin_control_register_t i2c_config = GPIO_MUX2|GPIO_PS;
 
 	const spi_config_t g_spi_config =
 	{
@@ -248,13 +267,24 @@ void system_init()
 
 	/*~~~~~~~ Buzzer configuration ~~~~~~~~~~~~*/
  	/**Pin control configuration of GPIOB pin0 as GPIO*/
-	GPIO_pin_control_register(GPIO_C, bit_5, &output_pit_config);
+	//GPIO_pin_control_register(GPIO_C, bit_5, &output_pit_config);
 	/**Assigns a safe value to the output pin*/
-	GPIO_set_pin(GPIO_C, bit_5);
+	//GPIO_set_pin(GPIO_C, bit_5);
 	/**Configures GPIOD pin0 as output*/
-	GPIO_data_direction_pin(GPIO_C, GPIO_OUTPUT,bit_5);
-	GPIO_clear_pin(GPIO_C,bit_5);
+	//GPIO_data_direction_pin(GPIO_C, GPIO_OUTPUT,bit_5);
+	//GPIO_clear_pin(GPIO_C,bit_5);
     /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+	/*~~~~~~~~~~~~ I2C configuration ~~~~~~~~~~*/
+	/*Set the configuration for i2c_config_Tx*/
+	GPIO_pin_control_register(GPIO_B, bit_2, &i2c_config);
+	/*Set the configuration for i2c_config_Rx*/
+	GPIO_pin_control_register(GPIO_B, bit_3, &i2c_config);
+	/*Set the config fot the pin that it will send the i2c protocol*/
+	GPIO_data_direction_pin(GPIO_B,GPIO_OUTPUT,bit_2);
+	/*Set the config fot the pin that it will receive the i2c protocol*/
+	GPIO_data_direction_pin(GPIO_B,GPIO_INPUT,bit_3);
+	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 	/*~~~~~~~~~~~~ PIT configuration ~~~~~~~~~~*/
 	PIT_clock_gating();
@@ -263,12 +293,16 @@ void system_init()
 	/* Set the delay for the pit_1 */
 	PIT_delay(PIT_0, SYSTEM_CLOCK, DELAY);
 	PIT_delay(PIT_2, SYSTEM_CLOCK, 0.1F); // @ 2 kHz
-	PIT_delay(PIT_3, SYSTEM_CLOCK, 1.0F);  // @ 1 Hz
+	PIT_delay(PIT_3, SYSTEM_CLOCK, DELAY);  // @ 1 Hz
 
 	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 	/* ~~~~~~~~  ADC configuration ~~~~~~~~ */
 	ADC_init();
+	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+	/* ~~~~~~~~  I2C configuration ~~~~~~~~ */
+	I2C_init(I2C_0,SYSTEM_CLOCK,BD_9600);
 	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 	/**Sets the threshold for interrupts, if the interrupt has higher priority constant that the BASEPRI, the interrupt will not be attended*/

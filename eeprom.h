@@ -12,20 +12,21 @@
 #define EEPROM_H_
 
 #include "bits.h"
-#include "I2C.h"
+#include "i2c.h"
 #include "stdint.h"
+#include "delay.h"
 
 #define CLEAR 0x0000
 
-#define EEPROM_WRITE_CONTROL 0xAE
-#define EEPROM_READ_CONTROL 0xAF
+#define EEPROM_WRITE_CONTROL 0xA0
+#define EEPROM_READ_CONTROL 0xA1
 #define NUM_USERS 4
 #define EEPROM_BYTES 32
 #define EEPROM_SIZE 0x00FF
 
 #define PAGE_SIZE 0x64
 
-#define EEPROM_DELAY 1000
+#define EEPROM_DELAY 6500
 
 typedef struct
 {
@@ -72,8 +73,24 @@ void EEPROM_clear_mem();
  * */
 void EEPROM_delay(uint32_t delay);
 
+/*\brief Funct to read via pag read all the data of the player
+ *\param[add] void
+ * */
 void eeprom_read_record(void);
+
+/*\brief Funct to update if any space was released for the users
+ *\param[add] void
+ * */
 void update_userspace_information(void);
+
+/*\brief Funct used to check if there is a user available
+ *\param[add] void
+ * */
 uint8_t get_available_userspace(void);
+
+/*\brief Funct send the data read from the eeprom to another layer
+ *\param[add] index
+ * */
+uint8_t get_buffer(uint8_t index);
 
 #endif /* EEPROM_H_ */

@@ -15,6 +15,7 @@
 #include "spi.h"
 #include "lcd_nokia.h"
 #include "LCD_nokia_images.h"
+#include "eeprom.h"
 
 #define TERM_NUM_ST     6
 #define SCREEN_LIMIT    84
@@ -24,6 +25,8 @@
 #define FSM_OP1_SIZE    7
 #define FSM_OP2_SIZE    7
 #define FSM_TOTAL_STATES  10
+#define SPI_OFFSET 8
+#define ASCII_DECODE 48
 
 typedef struct
 {
@@ -40,32 +43,119 @@ typedef struct
 } FSM_terminal_select_t;
 
 
+/*\brief Funct to display the menu in the spi
+ *\param[add] void
+ * */
 void terminal_menu_start(void);
 
+/*\brief Funct to make the user see wich option they are choosing
+ *\param[add] void
+ * */
 void terminal_menu_select0(void);
+
+/*\brief Funct to make the user see wich option they are choosing
+ *\param[add] void
+ * */
 void terminal_menu_select1(void);
+
+/*\brief Funct to make the user see wich option they are choosing
+ *\param[add] void
+ * */
 void terminal_menu_select2(void);
+
+/*\brief Funct to make the user see wich option they are choosing
+ *\param[add] void
+ * */
 void terminal_menu_select3(void);
+
+/*\brief Funct to make the user see wich option they are choosing
+ *\param[add] void
+ * */
 void terminal_menu_select4(void);
 
+/*\brief Funct to make the user see wich option they are choosing
+ *\param[add] void
+ * */
 void terminal_menu_op1(void);
+
+/*\brief Funct to make the user see wich option they are choosing
+ *\param[add] void
+ * */
 void terminal_menu_op2(void);
+
+/*\brief Funct to make the user see wich option they are choosing
+ *\param[add] void
+ * */
 void terminal_menu_op3(void);
+
+/*\brief Funct to make the user see wich option they are choosing
+ *\param[add] void
+ * */
 void terminal_menu_op4(void);
 
+/*\brief Funct to make the user see wich note they need to play
+ *\param[add] void
+ * */
 void terminal_playnote1(void);
+
+/*\brief Funct to make the user see wich note they need to play
+ *\param[add] void
+ * */
 void terminal_playnote2(void);
+
+/*\brief Funct to make the user see wich note they need to play
+ *\param[add] void
+ * */
 void terminal_playnote3(void);
+
+/*\brief Funct to make the user see wich note they need to play
+ *\param[add] void
+ * */
 void terminal_playnote4(void);
+
+/*\brief Funct to make the user see wich note they need to play
+ *\param[add] void
+ * */
 void terminal_playnote5(void);
 
+/*\brief Funct to read if there was any drop to avoid reading multiple time the same note
+ *\param[add] void
+ * */
 void terminal_VoltageDrop(void);
 
+/*\brief Funct to make the user see that he won
+ *\param[add] void
+ * */
 void terminal_victory_msg(void);
+
+/*\brief Funct to make the user see that he lost
+ *\param[add] void
+ * */
 void terminal_game_over_msg(void);
+
+/*\brief
+ *\param[add] void
+ * */
 void terminal_correct_msg(void);
+
+/*\brief
+ *\param[add] void
+ * */
 void terminal_press_start_msg(void);
+
+/*\brief Funct to make the user see that he need to put an username, just as an arcade game
+ *\param[add] void
+ * */
 void terminal_enter_your_initials(void);
-void terminal_score_saved();
+
+/*\brief Funct to make sure the score was saved correctly
+ *\param[add] void
+ * */
+void terminal_score_saved(void);
+
+/*\brief Funct to make the user see his score
+ *\param[add] void
+ * */
+void terminal_user_score(void);
 
 #endif /* UART_TERM_H_ */

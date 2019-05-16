@@ -23,40 +23,40 @@
 #define B1 2329
 #define C2 2458
 
-#define C1_1 1
+#define C1_1 4
 #define C1_2 1
-#define C1_3 6
-#define C1_4 4
+#define C1_3 4
+#define C1_4 1
 
-#define D1_1 1
-#define D1_2 2
-#define D1_3 9
-#define D1_4 4
+#define D1_1 4
+#define D1_2 6
+#define D1_3 5
+#define D1_4 7
 
-#define E1_1 1
-#define E1_2 4
-#define E1_3 2
-#define E1_4 3
+#define E1_1 5
+#define E1_2 1
+#define E1_3 7
+#define E1_4 6
 
-#define F1_1 1
-#define F1_2 6
-#define F1_3 8
-#define F1_4 2
+#define F1_1 5
+#define F1_2 8
+#define F1_3 2
+#define F1_4 3
 
-#define G1_1 1
-#define G1_2 6
-#define G1_3 8
-#define G1_4 2
+#define G1_1 6
+#define G1_2 2
+#define G1_3 1
+#define G1_4 1
 
-#define A1_1 1
+#define A1_1 6
 #define A1_2 8
-#define A1_3 1
-#define A1_4 1
+#define A1_3 5
+#define A1_4 8
 
-#define B1_1 2
-#define B1_2 2
-#define B1_3 0
-#define B1_4 0
+#define B1_1 8
+#define B1_2 1
+#define B1_3 5
+#define B1_4 2
 
 #define C2_1 2
 #define C2_2 4
@@ -79,7 +79,7 @@ typedef struct
 
 void FREQ_get_current_note(void);
 
-uint8_t FREQ_decode_voltage(uint8_t voltage_string[STRING_MAX]);
+uint8_t FREQ_decode_voltage(uint8_t voltage_string0, uint8_t voltage_string1, uint8_t voltage_string2,uint8_t voltage_string3);
 
 void FREQ_show_current_voltage(uint8_t voltage_string[STRING_MAX]);
 
@@ -90,7 +90,9 @@ void notedetector();
 void update_note_found_flag_status(uint8_t key);
 
 uint8_t get_note_found_flag(void);
+
 void update_current_note(uint8_t note);
+
 void update_highest_voltage_value(uint8_t voltage_val);
 
 #endif /* FREQUENCY_DECODER_H_ */

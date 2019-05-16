@@ -31,11 +31,14 @@
 
 
 
-/*
- * Funct used for the pseudo random number
- */
+/*\brief Funct to config the FTM for the output compare so we can get the counter from the reg
+ *\param[add] void
+ * */
 void FTM0_output_compare_config(void);
 
+/*\brief Funct used to get the pseudo rand number from the FTM counter
+ *\param[add] void
+ * */
 uint8_t FTM_get_counter_reg(void);
 
 

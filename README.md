@@ -33,3 +33,7 @@ Callbacks configured
 > PIT 1: frequency sound
 > PIT 2: adc sampling
 > PIT 3: time interrupt
+
+Power Source
+>Output A; 4.3V
+>Output B; 4.3V

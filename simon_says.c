@@ -50,6 +50,9 @@ void generate_sequence_buffer(void)
 
 	/* Update current global buffer */
 	get_sequence(sequence_number);
+	/*Enable interrupts*/
+	PIT_enable_interrupt(PIT_0);
+	PIT_enable_interrupt(PIT_1);
 }
 
 void play_sequence()
