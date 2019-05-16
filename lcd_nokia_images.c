@@ -2069,13 +2069,8 @@ void LCD_terminal_startup()
 	current_state = S2; //set initial state
 	do
 	{
-		/* Send to terminal the state's current text */
 		LCD_nokia_bitmap(FSM_terminal_start[current_state].bitmap);
-
-
 		current_state = FSM_terminal_start[current_state].next[INDEX_INIT];
-
-
 	}while(S1 != current_state); //repeat while all the states are completed
 
 }

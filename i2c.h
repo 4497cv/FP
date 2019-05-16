@@ -33,6 +33,9 @@ typedef enum{I2C_SLV = FALSE,I2C_MST = TRUE}i2c_mst_t;
 /**\brief This enum defines the transmission/reception **/
 typedef enum{I2C_RX = FALSE,I2C_TX = TRUE}i2c_mode_t;
 
+/** This enumeration defines some common transmission baud rates **/
+typedef enum {BD_4800 = 4800,BD_9600 = 9600,BD_5600 = 5600, BD_115200 = 115200} baud_rate_t;
+
  /*!
   	 \brief
   	 	 Configures the I2C port based on the input parameters.

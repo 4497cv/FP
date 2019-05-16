@@ -18,9 +18,15 @@
 #include "spi.h"
 #include "buzzer.h"
 #include "FlexTimer.h"
+#include "i2c.h"
+#include "eeprom.h"
 
 #define SYSTEM_CLOCK (21000000U)
 #define DELAY (1.0F)
+
+#define EEPROM_USER_ADDRESS_ONE   0x00U
+#define EEPROM_USER_ADDRESS_TWO   0x06U
+#define EEPROM_USER_ADDRESS_THREE 0x12U
 
 #define SYS_NUM_ST 6
 
@@ -30,6 +36,13 @@ typedef struct
 	system_state_t next[2];
 } FSM_system_t;
 
+typedef enum
+{
+	FIRST_LETTER,
+	SECOND_LETTER,
+	THIRD_LETTER,
+	SCORE_SAVED
+} letter_t;
 
 void system_init(void);
 
@@ -54,5 +67,9 @@ void system_player_board();
 void system_select_next_op();
 
 void system_set_start();
+
+void system_user_record_capture();
+
+void reset_menu();
 
 #endif /* SYSTEM_H_ */

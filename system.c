@@ -17,6 +17,9 @@ static terminal_state_t current_term_st; //current  terminal state
 static system_state_t current_system_select;
 static boolean_t system_start;
 static boolean_t system_select;
+static letter_t letter_value = SECOND_LETTER;
+static uint8_t letter_ascii;
+static uint8_t global_username[3];
 
 static FSM_terminal_t FSM_terminal[TERM_NUM_ST]=
 {
@@ -64,7 +67,7 @@ void system_menu(void)
 		FSM_terminal[current_term_st].fptr();
 		/* call corresponding system function */
 
-		if(current_system_select != system_Menu)
+		if(system_Menu != current_system_select)
 		{
 			FSM_system[current_system_select].fptr();
 		}
@@ -84,7 +87,102 @@ void system_menu(void)
 
 void system_play_classic()
 {
+	boolean_t buzzer_flag_status;
 	generate_sequence_buffer();
+	PIT_enable_interrupt(PIT_0);
+	/* start PIT for adc sampling @ 2kHz */
+	PIT_enable_interrupt(PIT_2);
+	/* start pit for time interrupt handler */
+	PIT_enable_interrupt(PIT_3);
+	send_sequence_buzzer();
+}
+
+void system_user_record_capture()
+{
+	static eeprom_index;
+	/**/
+	static uint8_t sys_time;
+	/* get current start state */
+	system_start = get_start_flag();
+	/* get current select state */
+	system_select = get_select_flag();
+
+	sys_time = get_time_g();
+
+	if(TRUE == system_select)
+	{
+		//global_username
+		switch(letter_value)
+		{
+			case FIRST_LETTER:
+				LCD_nokia_goto_xy(25,20);
+				LCD_nokia_send_char(letter_ascii);
+			break;
+			case SECOND_LETTER:
+				LCD_nokia_goto_xy(35,20);
+				LCD_nokia_send_char(letter_ascii);
+			break;
+			case THIRD_LETTER:
+				LCD_nokia_goto_xy(45,20);
+				LCD_nokia_send_char(letter_ascii);
+			break;
+			default:
+			break;
+		}
+	}
+	else if(TRUE == system_start)
+	{
+		switch(letter_value)
+		{
+			case FIRST_LETTER:
+				letter_value = SECOND_LETTER;
+				global_username[FIRST_LETTER] = letter_ascii-1;
+				/**/
+				//eeprom_index = EEPROM_USER_ADDRESS_ONE;
+				//EEPROM_write_mem(eeprom_index,letter_ascii-1);
+				//eeprom_index++;
+				/**/
+				letter_ascii = 64;
+			break;
+			case SECOND_LETTER:
+				letter_value = THIRD_LETTER;
+				global_username[SECOND_LETTER] = letter_ascii-1;
+				/**/
+				//EEPROM_write_mem(eeprom_index,letter_ascii-1);
+				//eeprom_index++;
+				/**/
+				letter_ascii = 64;
+			break;
+			case THIRD_LETTER:
+				letter_value = SCORE_SAVED;
+				global_username[THIRD_LETTER] = letter_ascii-1;
+				/**/
+				//EEPROM_write_mem(eeprom_index,letter_ascii-1);
+				//eeprom_index++;
+				/**/
+				letter_ascii = 64;
+			case SCORE_SAVED:
+				terminal_score_saved();
+				eeprom_store_record(global_username, sys_time);
+				/*Funcion para guardar tiempo*/
+				reset_menu();
+			break;
+			default:
+			break;
+		}
+	}
+
+
+	if((letter_ascii >= 64) && (letter_ascii < 90))
+	{
+		letter_ascii++;
+	}else
+	{
+		letter_ascii = 64;
+	}
+
+	toggle_start_flag();  //set start flag to false
+	toggle_select_flag(); //set select flag to false	
 }
 
 void system_player_board()
@@ -101,6 +199,7 @@ void system_dynamic_select_handler(void)
 		break;
 		case system_ClassicMode:
 			terminal_menu_select1();
+			send_sequence_buzzer();
 		break;
 		case system_PlayerBoard:
 			terminal_menu_select2();
@@ -119,6 +218,8 @@ void system_init()
 {
 	gpio_pin_control_register_t button_config = GPIO_MUX1 | GPIO_PS | GPIO_PE | INTR_FALLING_EDGE;
 	gpio_pin_control_register_t output_pit_config = GPIO_MUX1;
+	/*PCR config*/
+	gpio_pin_control_register_t i2c_config = GPIO_MUX2|GPIO_PS;
 
 	const spi_config_t g_spi_config =
 	{
@@ -168,30 +269,42 @@ void system_init()
 
 	/*~~~~~~~ Buzzer configuration ~~~~~~~~~~~~*/
  	/**Pin control configuration of GPIOB pin0 as GPIO*/
-	GPIO_pin_control_register(GPIO_C, bit_5, &output_pit_config);
+	//GPIO_pin_control_register(GPIO_C, bit_5, &output_pit_config);
 	/**Assigns a safe value to the output pin*/
-	GPIO_set_pin(GPIO_C, bit_5);
+	//GPIO_set_pin(GPIO_C, bit_5);
 	/**Configures GPIOD pin0 as output*/
-	GPIO_data_direction_pin(GPIO_C, GPIO_OUTPUT,bit_5);
-	GPIO_clear_pin(GPIO_C,bit_5);
+	//GPIO_data_direction_pin(GPIO_C, GPIO_OUTPUT,bit_5);
+	//GPIO_clear_pin(GPIO_C,bit_5);
     /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+	/*~~~~~~~~~~~~ I2C configuration ~~~~~~~~~~*/
+	/*Set the configuration for i2c_config_Tx*/
+	GPIO_pin_control_register(GPIO_B, bit_2, &i2c_config);
+	/*Set the configuration for i2c_config_Rx*/
+	GPIO_pin_control_register(GPIO_B, bit_3, &i2c_config);
+	/*Set the config fot the pin that it will send the i2c protocol*/
+	GPIO_data_direction_pin(GPIO_B,GPIO_OUTPUT,bit_2);
+	/*Set the config fot the pin that it will receive the i2c protocol*/
+	GPIO_data_direction_pin(GPIO_B,GPIO_INPUT,bit_3);
+	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 	/*~~~~~~~~~~~~ PIT configuration ~~~~~~~~~~*/
 	PIT_clock_gating();
 	/* Activating PIT */
 	PIT_enable();
-	/* Set the delay for the pit_0 */
-	PIT_delay(PIT_0, SYSTEM_CLOCK, DELAY);
 	/* Set the delay for the pit_1 */
-	PIT_delay(PIT_3, SYSTEM_CLOCK, DELAY);
-	/* Set callback of the pit*/
-	PIT_callback_init(PIT_3,PIT_timer_counter);
-	/*Disable pit 1 ISR*/
-	//PIT_disable_interrupt(PIT_3);
+	PIT_delay(PIT_0, SYSTEM_CLOCK, DELAY);
+	PIT_delay(PIT_2, SYSTEM_CLOCK, 0.1F); // @ 2 kHz
+	PIT_delay(PIT_3, SYSTEM_CLOCK, DELAY);  // @ 1 Hz
+
 	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 	/* ~~~~~~~~  ADC configuration ~~~~~~~~ */
 	ADC_init();
+	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+	/* ~~~~~~~~  I2C configuration ~~~~~~~~ */
+	I2C_init(I2C_0,SYSTEM_CLOCK,BD_9600);
 	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 	/**Sets the threshold for interrupts, if the interrupt has higher priority constant that the BASEPRI, the interrupt will not be attended*/
@@ -201,19 +314,39 @@ void system_init()
 	/* Set PORT C interrupt priority */
 	NVIC_enable_interrupt_and_priotity(PORTC_IRQ, PRIORITY_5);
 	/*Activating the ISR for the PIT and set the priority*/
-	NVIC_enable_interrupt_and_priotity(PIT_CH0_IRQ, PRIORITY_6);
+	NVIC_enable_interrupt_and_priotity(PIT_CH0_IRQ, PRIORITY_4);
 	/*Activating the ISR for the PIT and set the priority*/
-	NVIC_enable_interrupt_and_priotity(PIT_CH1_IRQ, PRIORITY_6);
-	/** Callbacks for PIT */
-	PIT_callback_init(PIT_0,send_sequence_buzzer);
-	/* Enable NVIC Interrupts */
+	NVIC_enable_interrupt_and_priotity(PIT_CH1_IRQ, PRIORITY_5);
+	NVIC_enable_interrupt_and_priotity(PIT_CH2_IRQ, PRIORITY_3);
+	/*Activating the ISR for the PIT and set the priority*/
+	NVIC_enable_interrupt_and_priotity(PIT_CH3_IRQ, PRIORITY_2);
 	NVIC_global_enable_interrupts;
+	/*~~~~~~~~~~~~ CALLBACKS configuration ~~~~~~~~~~*/
+	/* Callbacks for PIT */
+	PIT_callback_init(PIT_0,send_sequence_buzzer);
+	/* Callbacks for sampling PIT */
+	PIT_callback_init(PIT_2, FREQ_get_current_note);
+	/* Callbacks for time PIT */
+	PIT_callback_init(PIT_3, handle_time_interrupt);
+	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 	current_term_st = terminal_start;
 	FSM_terminal[current_term_st].fptr(); //invoke state's related function
 
 	current_term_st = FSM_terminal[current_term_st].next[0]; //set initial terminal state (display menu)
 	current_system_select = system_Menu; //set state pointer to classic mode
+	letter_ascii = 64;
+	letter_value = FIRST_LETTER;
+}
+
+void reset_menu()
+{
+	FSM_terminal[terminal_menu].fptr();
+	current_system_select = system_Menu; //set state pointer to classic mode
+	letter_ascii = 64;
+	letter_value = FIRST_LETTER;
+	toggle_playerboard_flag();
+	reset_game_timeout();
 }
 
 

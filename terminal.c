@@ -15,6 +15,7 @@
 void terminal_menu_start(void)
 {
 	LCD_terminal_startup();
+	terminal_press_start_msg();
 }
 
 void terminal_menu_select0(void)
@@ -72,9 +73,7 @@ void terminal_menu_op2(void)
 	LCD_nokia_clear();
 	LCD_set_frame();
 	LCD_nokia_goto_xy(22,10);
-	LCD_nokia_send_string("Leader");
-	LCD_nokia_goto_xy(25,11);
-	LCD_nokia_send_string("Board");
+	LCD_nokia_send_string("Records");
 }
 
 void terminal_playnote1(void)
@@ -112,17 +111,6 @@ void terminal_playnote5(void)
 	LCD_nokia_send_string("Play Note #5");
 }
 
-void terminal_VoltageDrop(void)
-{
-	LCD_nokia_clear();
-	LCD_nokia_goto_xy(22,10);
-	LCD_nokia_send_string("Waiting for");
-	LCD_nokia_goto_xy(25,11);
-	LCD_nokia_send_string("voltage");
-	LCD_nokia_goto_xy(25,11);
-	LCD_nokia_send_string("drop");
-}
-
 void terminal_victory_msg(void)
 {
 	LCD_nokia_clear();
@@ -134,7 +122,7 @@ void terminal_game_over_msg(void)
 {
 	LCD_nokia_clear();
 	LCD_nokia_goto_xy(0,10);
-	LCD_nokia_send_string("GAME OVER :(");
+	LCD_nokia_send_string("GAME OVER");
 }
 
 void terminal_correct_msg(void)
@@ -142,4 +130,41 @@ void terminal_correct_msg(void)
 	LCD_nokia_clear();
 	LCD_nokia_goto_xy(0,10);
 	LCD_nokia_send_string("Correct!");
+}
+
+void terminal_press_start_msg(void)
+{
+	LCD_nokia_goto_xy(5,45);
+	LCD_nokia_send_string("Press start");
+}
+
+void terminal_enter_your_initials()
+{
+	LCD_nokia_clear();
+	LCD_nokia_goto_xy(0,1);
+	LCD_nokia_send_string("Enter your");
+	LCD_nokia_goto_xy(0,2);
+	LCD_nokia_send_string("initials:");
+}
+
+void terminal_score_saved()
+{
+	LCD_nokia_clear();
+	LCD_nokia_goto_xy(18,10);
+	LCD_nokia_send_string("score");
+	LCD_nokia_goto_xy(18,11);
+	LCD_nokia_send_string("saved");
+}
+
+void terminal_user_score()
+{
+	uint8_t *buffer_t;
+
+	buffer_t = get_buffer();
+
+	LCD_nokia_clear();
+	LCD_nokia_goto_xy(0,1);
+	LCD_nokia_send_string("Score");
+	LCD_nokia_goto_xy(0,2);
+	LCD_nokia_send_char(buffer_t[0]);
 }

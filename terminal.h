@@ -15,6 +15,7 @@
 #include "spi.h"
 #include "lcd_nokia.h"
 #include "LCD_nokia_images.h"
+#include "eeprom.h"
 
 #define TERM_NUM_ST     6
 #define SCREEN_LIMIT    84
@@ -64,5 +65,8 @@ void terminal_VoltageDrop(void);
 void terminal_victory_msg(void);
 void terminal_game_over_msg(void);
 void terminal_correct_msg(void);
+void terminal_press_start_msg(void);
+void terminal_enter_your_initials(void);
+void terminal_score_saved();
 
 #endif /* UART_TERM_H_ */

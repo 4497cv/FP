@@ -18,8 +18,8 @@
 #include "Bits.h"
 #include "MK64F12.h"
 
-#define VOLT 3.3F
-#define ADC_MAX 255
+#define ANALOG_LIMIT 3.3F
+#define DIGITAL_LIMIT 255
 
 void ADC_init(void);
 uint8_t ADC_result(void);

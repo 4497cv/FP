@@ -24,6 +24,7 @@ static gpio_interrupt_flags_t g_intr_status_flag = {0};
 
 static boolean_t system_set_start_flag;
 static boolean_t system_set_select_flag;
+static boolean_t playerboard_select;
 
 /*CALLBACK INIT*/
 /*FuncrPtr to destFunct*/
@@ -78,8 +79,11 @@ void PORTB_IRQHandler(void)
 }
 void PORTC_IRQHandler(void)
 {
-	uint8_t pin_select = GPIO_read_pin(GPIO_C, bit_2);
-	uint8_t pin_start = GPIO_read_pin(GPIO_C, bit_3);
+	uint8_t pin_select;
+	uint8_t pin_start;
+
+	pin_start = GPIO_read_pin(GPIO_C, bit_3);
+	pin_select = GPIO_read_pin(GPIO_C, bit_2);
 
 	if(TRUE == pin_start)
 	{
@@ -105,7 +109,14 @@ void PORTC_IRQHandler(void)
 
 	GPIO_clear_interrupt(GPIO_C);
 
-	system_menu(); //CHANGE TO CALLBACKS
+	if(TRUE == playerboard_select)
+	{
+		system_user_record_capture(); //CHANGE TO CALLBACKS
+	}
+	else
+	{
+		system_menu(); //CHANGE TO CALLBACKS
+	}
 }
 void PORTD_IRQHandler(void)
 {
@@ -471,4 +482,20 @@ void toggle_start_flag(void)
 void toggle_select_flag(void)
 {
 	system_set_select_flag = FALSE;
+}
+
+
+void set_playerboard_flag(void)
+{
+	playerboard_select = TRUE;
+}
+
+void toggle_playerboard_flag(void)
+{
+	playerboard_select = FALSE;
+}
+
+boolean_t get_playerboard_flag(void)
+{
+	return playerboard_select;
 }
