@@ -191,7 +191,7 @@ void terminal_user_score()
 	LCD_nokia_send_string("Points:");
 	LCD_nokia_goto_xy(spi_index,5);
 	spi_index = spi_index + SPI_OFFSET;
-	LCD_nokia_send_char(buffer_t[5]-ASCII_DECODE);
+	LCD_nokia_send_char(buffer_t[5]+ASCII_DECODE);
 /**/
 	spi_index = spi_index + SPI_OFFSET;
 	LCD_nokia_goto_xy(spi_index,5);
@@ -199,5 +199,5 @@ void terminal_user_score()
 /**/
 	spi_index = spi_index + SPI_OFFSET;
 	LCD_nokia_goto_xy(spi_index,5);
-	LCD_nokia_send_char(buffer_t[6]-ASCII_DECODE);
+	LCD_nokia_send_char(buffer_t[6]+ASCII_DECODE);
 }

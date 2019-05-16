@@ -17,16 +17,16 @@
 #include "LCD_nokia_images.h"
 #include "eeprom.h"
 
-#define TERM_NUM_ST     6
-#define SCREEN_LIMIT    84
-#define INDEX_INIT 		0
-#define FSM_START_SIZE  6
-#define FSM_SELECT_SIZE 9
-#define FSM_OP1_SIZE    7
-#define FSM_OP2_SIZE    7
-#define FSM_TOTAL_STATES  10
-#define SPI_OFFSET 8
-#define ASCII_DECODE 48
+#define TERM_NUM_ST     6U
+#define SCREEN_LIMIT    84U
+#define INDEX_INIT 		0U
+#define FSM_START_SIZE  6U
+#define FSM_SELECT_SIZE 9U
+#define FSM_OP1_SIZE    7U
+#define FSM_OP2_SIZE    7U
+#define FSM_TOTAL_STATES  10U
+#define SPI_OFFSET 8U
+#define ASCII_DECODE 0x30U
 
 typedef struct
 {
