@@ -4,9 +4,7 @@
 			  It also contains the user menu.
 	\authors: César Villarreal Hernández, ie707560
 	          Luís Fernando Rodríguez Gutiérrez, ie705694
-
 	\date	  02/05/2019
-
     Notes: start and select states are changed by the interrupt of port c, by pressing the push buttons.
 */
 
@@ -88,13 +86,13 @@ void system_menu(void)
 void system_play_classic()
 {
 	boolean_t buzzer_flag_status;
+	/* generate sequence and store it in the global buffer */
 	generate_sequence_buffer();
-	PIT_enable_interrupt(PIT_0);
+
 	/* start PIT for adc sampling @ 2kHz */
 	PIT_enable_interrupt(PIT_2);
 	/* start pit for time interrupt handler */
 	PIT_enable_interrupt(PIT_3);
-	send_sequence_buzzer();
 }
 
 void system_user_record_capture(uint8_t sys_time)
@@ -109,7 +107,6 @@ void system_user_record_capture(uint8_t sys_time)
 
 	if(TRUE == system_select)
 	{
-		//global_username
 		switch(letter_value)
 		{
 			case FIRST_LETTER:
@@ -265,16 +262,6 @@ void system_init()
 	GPIO_data_direction_pin(GPIO_C, GPIO_INPUT, bit_2);
 	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-	/*~~~~~~~ Buzzer configuration ~~~~~~~~~~~~*/
- 	/**Pin control configuration of GPIOB pin0 as GPIO*/
-	//GPIO_pin_control_register(GPIO_C, bit_5, &output_pit_config);
-	/**Assigns a safe value to the output pin*/
-	//GPIO_set_pin(GPIO_C, bit_5);
-	/**Configures GPIOD pin0 as output*/
-	//GPIO_data_direction_pin(GPIO_C, GPIO_OUTPUT,bit_5);
-	//GPIO_clear_pin(GPIO_C,bit_5);
-    /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
 	/*~~~~~~~~~~~~ I2C configuration ~~~~~~~~~~*/
 	/*Set the configuration for i2c_config_Tx*/
 	GPIO_pin_control_register(GPIO_B, bit_2, &i2c_config);
@@ -294,7 +281,6 @@ void system_init()
 	PIT_delay(PIT_0, SYSTEM_CLOCK, DELAY);
 	PIT_delay(PIT_2, SYSTEM_CLOCK, 0.1F); // @ 2 kHz
 	PIT_delay(PIT_3, SYSTEM_CLOCK, DELAY);  // @ 1 Hz
-
 	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 	/* ~~~~~~~~  ADC configuration ~~~~~~~~ */
