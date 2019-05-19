@@ -37,9 +37,9 @@ static FSM_system_t FSM_system[3]=
 void system_menu(void)
 {
 	/* get current start state */
-	system_start = get_start_flag();
+	system_start = GPIO_get_start_flag();
 	/* get current select state */
-	system_select = get_select_flag();
+	system_select = GPIO_get_select_flag();
 
 	/* verify if the start button is pressed */
 	if(TRUE == system_start) 
@@ -70,8 +70,8 @@ void system_menu(void)
 			FSM_system[current_system_select].fptr();
 		}
 
-		toggle_start_flag();  //set start flag to false
-		toggle_select_flag(); //set select flag to false
+		GPIO_toggle_start_flag();  //set start flag to false
+		GPIO_toggle_select_flag(); //set select flag to false
 	}
 	else if(system_select)
 	{
@@ -85,10 +85,8 @@ void system_menu(void)
 
 void system_play_classic()
 {
-	boolean_t buzzer_flag_status;
 	/* generate sequence and store it in the global buffer */
-	generate_sequence_buffer();
-
+	CM_generate_sequence_buffer();
 	/* start PIT for adc sampling @ 2kHz */
 	PIT_enable_interrupt(PIT_2);
 	/* start pit for time interrupt handler */
@@ -97,13 +95,12 @@ void system_play_classic()
 
 void system_user_record_capture(uint8_t sys_time)
 {
-	static eeprom_index;
 	/* get current start state */
-	system_start = get_start_flag();
+	system_start = GPIO_get_start_flag();
 	/* get current select state */
-	system_select = get_select_flag();
+	system_select = GPIO_get_select_flag();
 
-	sys_time = get_time_g();
+	sys_time = CM_get_time_g();
 
 	if(TRUE == system_select)
 	{
@@ -176,8 +173,8 @@ void system_user_record_capture(uint8_t sys_time)
 		letter_ascii = 64;
 	}
 
-	toggle_start_flag();  //set start flag to false
-	toggle_select_flag(); //set select flag to false	
+	GPIO_toggle_start_flag();  //set start flag to false
+	GPIO_toggle_select_flag(); //set select flag to false
 }
 
 void system_player_board()
@@ -194,7 +191,6 @@ void system_dynamic_select_handler(void)
 		break;
 		case system_ClassicMode:
 			terminal_menu_select1();
-			send_sequence_buzzer();
 		break;
 		case system_PlayerBoard:
 			terminal_menu_select2();
@@ -212,8 +208,6 @@ void system_select_next_op()
 void system_init()
 {
 	gpio_pin_control_register_t button_config = GPIO_MUX1 | GPIO_PS | GPIO_PE | INTR_FALLING_EDGE;
-	gpio_pin_control_register_t output_pit_config = GPIO_MUX1;
-	/*PCR config*/
 	gpio_pin_control_register_t i2c_config = GPIO_MUX2|GPIO_PS;
 
 	const spi_config_t g_spi_config =
@@ -279,7 +273,7 @@ void system_init()
 	PIT_enable();
 	/* Set the delay for the pit_1 */
 	PIT_delay(PIT_0, SYSTEM_CLOCK, DELAY);
-	PIT_delay(PIT_2, SYSTEM_CLOCK, 0.1F); // @ 2 kHz
+	PIT_delay(PIT_2, SYSTEM_CLOCK, 0.1F);   // @ 2 kHz
 	PIT_delay(PIT_3, SYSTEM_CLOCK, DELAY);  // @ 1 Hz
 	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
@@ -305,13 +299,13 @@ void system_init()
 	/*Activating the ISR for the PIT and set the priority*/
 	NVIC_enable_interrupt_and_priotity(PIT_CH3_IRQ, PRIORITY_2);
 	NVIC_global_enable_interrupts;
+	
 	/*~~~~~~~~~~~~ CALLBACKS configuration ~~~~~~~~~~*/
-	/* Callbacks for PIT */
-	PIT_callback_init(PIT_0,send_sequence_buzzer);
+
 	/* Callbacks for sampling PIT */
-	PIT_callback_init(PIT_2, FREQ_get_current_note);
+	PIT_callback_init(PIT_2, LM2907_get_current_note);
 	/* Callbacks for time PIT */
-	PIT_callback_init(PIT_3, handle_time_interrupt);
+	PIT_callback_init(PIT_3, CM_handle_time_interrupt);
 	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 	current_term_st = terminal_start;
@@ -329,8 +323,8 @@ void reset_menu()
 	current_system_select = system_Menu; //set state pointer to classic mode
 	letter_ascii = 64;
 	letter_value = FIRST_LETTER;
-	toggle_playerboard_flag();
-	reset_game_timeout();
+	GPIO_toggle_playerboard_flag();
+	CM_reset_game_timeout();
 }
 
 

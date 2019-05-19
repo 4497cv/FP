@@ -1,7 +1,6 @@
 /*!
 	\file 	  eeprom.c
-	\brief
-			  This is the source file for the EEPROM module. It contains functions
+	\brief    This is the source file for the EEPROM module. It contains functions
 			  for the operation of the EEPROM integrated circuit.
 	\authors: César Villarreal Hernández, ie707560
 	          José Luis Rodríguez Gutierrez, ie705694
@@ -283,16 +282,21 @@ void EEPROM_read_mem_page(void)
 
 void EEPROM_clear_mem()
 {
-	uint8_t clear;
-	for(clear = FALSE;clear<EEPROM_SIZE; clear++)
+	uint8_t i;
+
+	for(i = FALSE; EEPROM_SIZE > i; i++)
 	{
-		EEPROM_write_mem(clear,CLEAR);
+		EEPROM_write_mem(i, CLEAR);
 	}
 }
 
 void EEPROM_delay(uint32_t delay){
-	uint32_t i=delay;
-	while(i!=0){
+	uint32_t i;
+	
+	i = delay;
+
+	while(i!=0)
+	{
 		i--;
 	}
 }
@@ -319,7 +323,9 @@ void eeprom_store_record(uint8_t username[3], uint8_t time_g)
 		sec = (uint8_t) sec_fp;
 	}
 
+#ifndef DEBUG
 	printf("time:0%i:0%i  Username: %c %c %c \n", min, sec, username[0], username[1], username[2]);
+#endif
 
 	update_userspace_information();
 
@@ -384,7 +390,7 @@ uint8_t get_available_userspace(void)
 {
 	uint8_t i;
 
-	for(i = 0; NUM_USERS > i; i++)
+	for(i = ZERO; NUM_USERS > i; i++)
 	{
 		if(TRUE == user_available[i])
 		{

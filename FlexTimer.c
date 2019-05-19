@@ -11,7 +11,7 @@
 
 
 
-#include "FlexTimer.h"
+#include <flextimer.h>
 #include "MK64F12.h"
 
 void FTM0_IRQHandler()

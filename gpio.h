@@ -251,17 +251,18 @@ uint8_t GPIO_get_irq_status(gpio_port_name_t gpio);
  */
 void GPIO_callback_init(gpio_port_name_t port_name,void (*handler)(void));
 
-boolean_t get_start_flag(void);
+boolean_t GPIO_get_start_flag(void);
 
-boolean_t get_select_flag(void);
+boolean_t GPIO_get_select_flag(void);
 
-void toggle_start_flag(void);
+void GPIO_toggle_start_flag(void);
 
-void toggle_select_flag(void);
+void GPIO_toggle_select_flag(void);
 
-boolean_t get_playerboard_flag();
+boolean_t GPIO_get_playerboard_flag(void);
 
-void set_playerboard_flag();
-void toggle_playerboard_flag();
+void GPIO_set_playerboard_flag(void);
+
+void GPIO_toggle_playerboard_flag(void);
 
 #endif /* GPIO_H_ */

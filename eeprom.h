@@ -93,4 +93,6 @@ uint8_t get_available_userspace(void);
  * */
 uint8_t get_buffer(uint8_t index);
 
+void eeprom_store_record(uint8_t username[3], uint8_t time_g);
+
 #endif /* EEPROM_H_ */

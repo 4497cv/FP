@@ -1,21 +1,15 @@
 /*
-	\file 	  frequency_decoder.c
-	\brief	  This source file contains functions for the interpration of a guitar signal input.
-
+	\file 	  LM2907.c
+	\brief	  This source file contains functions for the frequency to voltage converter module.
 	\authors: César Villarreal Hernández, ie707560
 	          Luís Fernando Rodríguez Gutiérrez, ie705694
-
 	\date	  03/05/2019
-
-	center coordinates 25,10
-
 */
 
-#include "frequency_decoder.h"
-static float highest_val = 0;
+#include "LM2907.h"
+
 static boolean_t note_found_f = FALSE;
 static uint8_t current_note_g;
-static boolean_t valid_flag;
 
 static const Keymap_t key_map[KEYMAP_SIZE]=
 {
@@ -28,19 +22,14 @@ static const Keymap_t key_map[KEYMAP_SIZE]=
 	{'B',   B1_1, B1_2, B1_3, B1_4}  /*  SI  */
 };
 
-void update_current_note(uint8_t note)
-{
-	current_note_g = note;
-}
-
-void FREQ_get_current_note(void)
+void LM2907_get_current_note(void)
 {
 	float voltage_val; //voltage value read
 	uint8_t digital_val; //digital value read
 	uint8_t index; //string's index
 	uint8_t temp;  //voltage integer round-up
 	uint8_t key;   //voltage to keynote conversion value
-	uint8_t cadena[STRING_MAX] = {0}; //string that contains voltage
+	uint8_t voltage_string[STRING_MAX] = {ZERO}; //string that contains voltage
 	
 	/* get current adc captured value */
 	digital_val = ADC_read();
@@ -48,57 +37,68 @@ void FREQ_get_current_note(void)
 	/* conversion to 3.3 V reference */
 	voltage_val = (ANALOG_LIMIT*digital_val)/DIGITAL_LIMIT;
 
-	/*
-	 * VERIFY IF NUMERIC SHIFT IS RIGHT
-	*/
-
 	index = 0;
+
 	do
 	{
 		temp = (uint8_t) voltage_val;
-		cadena[index] = temp;
+		voltage_string[index] = temp;
 		index++;
 
 		voltage_val = voltage_val - temp;
 		voltage_val = voltage_val * 10;
 
 		temp = (uint8_t) voltage_val;
-		cadena[index] = temp;
+		voltage_string[index] = temp;
 		index++;
 
 		voltage_val = voltage_val - temp;
 		voltage_val = voltage_val * 10;
 
 		temp = (uint8_t) voltage_val;
-		cadena[index] = temp;
+		voltage_string[index] = temp;
 	}while(index < 5);
 
 	/* get current key note*/
-	key = FREQ_decode_voltage(cadena[0], cadena[1], cadena[2], cadena[3]);
-
-	//printf("%c\n", key);
-
-	//FREQ_show_current_voltage(cadena);
+	key = LM2907_decode_voltage(voltage_string[ONE], voltage_string[TWO], voltage_string[THREE]);
 
 	/* verify if the note played coincides with current note status value */
-	update_note_found_flag_status(key);
+	LM2907_update_note_found_flag_status(key);
 }
 
-
-void update_highest_voltage_value(uint8_t voltage_val)
+uint8_t LM2907_decode_voltage(uint8_t voltage_string1, uint8_t voltage_string2,uint8_t voltage_string3)
 {
-	/* keep highest voltage value */
-	if(highest_val < voltage_val)
+	uint8_t i;
+	uint8_t index;
+	uint8_t key;
+	boolean_t notfound_flag;
+
+	notfound_flag = TRUE;
+
+	for(i = ZERO; KEYMAP_SIZE > i ; i++)
 	{
-		highest_val = voltage_val;
+		if((key_map[i].centi == voltage_string1) &&
+		   (key_map[i].milli == voltage_string2) &&
+		   (key_map[i].micro == voltage_string3))
+		{
+			index = i;
+			notfound_flag = FALSE;
+		}
+	}
+
+	if(FALSE == notfound_flag)
+	{
+		key = key_map[index].key;
 	}
 	else
 	{
-		/* do nothing */
+		key = ZERO;
 	}
+
+	return key;
 }
 
-void update_note_found_flag_status(uint8_t key)
+void LM2907_update_note_found_flag_status(uint8_t key)
 {
 	if((key == current_note_g) && (current_note_g != ZERO))
 	{
@@ -110,47 +110,27 @@ void update_note_found_flag_status(uint8_t key)
 	}
 }
 
-uint8_t get_note_found_flag(void)
+boolean_t LM2907_get_note_found_flag(void)
 {
 	return note_found_f;
 }
 
-uint8_t FREQ_decode_voltage(uint8_t voltage_string0, uint8_t voltage_string1, uint8_t voltage_string2,uint8_t voltage_string3)
+void LM2907_update_current_note(uint8_t note)
 {
-	uint8_t i;
-	uint8_t index;
-	uint8_t key;
-	boolean_t notfound_flag;
-
-	notfound_flag = TRUE;
-	valid_flag = FALSE;
-
-	for(i=0; i < KEYMAP_SIZE; i++)
-	{
-		if((key_map[i].centi == voltage_string1) &&
-		   (key_map[i].milli == voltage_string2) &&
-		   (key_map[i].micro == voltage_string3))
-		{
-			index = i;
-			notfound_flag = FALSE;
-			valid_flag = TRUE;
-		}
-	}
-
-	if(FALSE == notfound_flag)
-	{
-		key = key_map[index].key;
-	}
-	else
-	{
-		key = 0;
-	}
-
-	return key;
+	current_note_g = note;
 }
 
-void FREQ_show_current_voltage(uint8_t voltage_string[STRING_MAX])
+void LM2907_show_current_voltage(uint8_t voltage_string[STRING_MAX])
 {
-	printf("Vout = %i.%i%i%i%i V\n", voltage_string[0], voltage_string[1], voltage_string[2], voltage_string[3], voltage_string[4]);
+#ifndef DEBUG
+	printf("Vout = %i.%i%i%i%i V\n", voltage_string[ZERO], voltage_string[ONE], voltage_string[TWO], voltage_string[THREE], voltage_string[FOUR]);
+#endif
+}
+
+void LM2907_show_current_key(uint8_t key)
+{
+#ifndef DEBUG
+	printf("%c\n", key);
+#endif
 }
 

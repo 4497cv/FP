@@ -1,17 +1,20 @@
+/*
+	\file 	  classic_mode.c
+	\brief	  This source file contains the implementation for the frequency guessing game. 
+	\authors: César Villarreal Hernández, ie707560
+	          Luís Fernando Rodríguez Gutiérrez, ie705694
+	\date	  03/05/2019
+*/
 
-#include "simon_says.h"
+#include "classic_mode.h"
 
-static uint8_t buffer_sequence[SIMON_SEQUENCE] = {0};
+static uint8_t buffer_sequence[BUFFER_SIZE] = {0};
 static boolean_t sequence_complete_g;
-static uint8_t current_key;
-static uint8_t prev_key;
-static boolean_t key_flag;
 static uint8_t sequence_number;
 static boolean_t timeout_status_flag = FALSE;
 static NoteBuffer_t current_state = buffer_S1;
 static volatile uint8_t seconds_g = 0;
 static volatile uint8_t time_g = 0;
-static boolean_t buzzer_end_flag;
 
 sequence_map_t sequence_map[SEQUENCE_SIZE] =
 {
@@ -25,7 +28,7 @@ sequence_map_t sequence_map[SEQUENCE_SIZE] =
 	{SEQUENCE_SEVEN,	{C, A, G, A, D}}
 };
 
-static FSM_SS_t FSM_Buffer[5]=
+static FSM_SS_t FSM_Buffer[BUFFER_SIZE]=
 {
 	{&buffer_sequence[0],   {buffer_S2,  buffer_S3, buffer_S4, buffer_S5, buffer_S1}},
 	{&buffer_sequence[1],   {buffer_S3,  buffer_S4, buffer_S5, buffer_S1, buffer_S2}},
@@ -34,104 +37,63 @@ static FSM_SS_t FSM_Buffer[5]=
 	{&buffer_sequence[4],   {buffer_S1,  buffer_S2, buffer_S3, buffer_S4, buffer_S5}}
 };
 
-static TERM_playnotes_t FSM_term_playnotes[5]=
+void CM_generate_sequence_buffer(void)
 {
-	{terminal_playnote1,   {buffer_S2,  buffer_S3, buffer_S4, buffer_S5, buffer_S1}},
-	{terminal_playnote2,   {buffer_S3,  buffer_S4, buffer_S5, buffer_S1, buffer_S2}},
-	{terminal_playnote3,   {buffer_S4,  buffer_S5, buffer_S1, buffer_S2, buffer_S3}},
-	{terminal_playnote4,   {buffer_S5,  buffer_S1, buffer_S2, buffer_S3, buffer_S4}},
-	{terminal_playnote5,   {buffer_S1,  buffer_S2, buffer_S3, buffer_S4, buffer_S5}}
-};
-
-void generate_sequence_buffer(void)
-{
+	/* get random sequence number (0-8)*/
     sequence_number = FTM_get_counter_reg();
+    /* set that the sequence is not complete yet*/
 	sequence_complete_g = FALSE;
-
 	/* Update current global buffer */
-	get_sequence(sequence_number);
-	/*Enable interrupts*/
-	PIT_enable_interrupt(PIT_0);
-	PIT_enable_interrupt(PIT_1);
+	CM_get_sequence(sequence_number);
 }
 
-void play_sequence()
-{
-	/* Enable PIT #0 interrupt */
-	PIT_enable_interrupt(PIT_0);
-	/* Enable PIT #1 interrupt */
-	PIT_enable_interrupt(PIT_1);
-}
-
-void get_sequence(uint8_t sequence_index)
+void CM_get_sequence(uint8_t sequence_index)
 {
 	uint8_t i;
-
-	for(i = 0; BUFFER_SIZE > i ; i++)
+	
+	for(i = ZERO; BUFFER_SIZE > i ; i++)
 	{
 		/* update buffer sequence to global buffer */
 		buffer_sequence[i] = sequence_map[sequence_index].sequence_buffer[i];
 	}
+
+	/* Displays on LCD screen corresponding note in music pentagram  */
+	LCD_set_pentagram_sequence(sequence_number, buffer_S1);
 }
 
-void send_sequence_buzzer(void)
+void CM_handle_time_interrupt(void)
 {
-	static uint8_t index;
-	boolean_t pit_status;
+	boolean_t victory_flag; //this flag indicates if the user has won or lost the game
+	boolean_t note_found_flag; //this flag indicates if a note has been found
 
-	pit_status = PIT_get_interrupt_flag_status(PIT_0);
+	/* Sets current state corresponding buffer value to the frequency converter module */
+	LM2907_update_current_note(*FSM_Buffer[current_state].key_number);
 
-	if(TRUE == pit_status)
-	{
-		note_frequency(buffer_sequence[index]);
-		index++;
-		if(BUFFER_LIMIT == index)
-		{
-			index = 0;
-			/* disable PIT #0 interrupt */
-			PIT_disable_interrupt(PIT_0);
-			/* disable PIT #1 interrupt */
-			PIT_disable_interrupt(PIT_1);
-
-			GPIO_clear_pin(GPIO_C,bit_5);
-		}
-		else
-		{
-			/* shut down buzzer */
-			GPIO_clear_pin(GPIO_C,bit_5);
-		}
-	}
-}
-
-boolean_t get_buzzer_end_flag_status(void)
-{
-	return buzzer_end_flag;
-}
-
-void handle_time_interrupt(void)
-{
-	boolean_t victory_flag;
-	boolean_t note_found_flag;
-	update_current_note(*FSM_Buffer[current_state].key_number);
-	LCD_set_pentagram_sequence(sequence_number, current_state);
 	/* get note found flag status */
-	note_found_flag = get_note_found_flag();
+	note_found_flag = LM2907_get_note_found_flag();
 
 	if(note_found_flag)
 	{
 		/* send victory message to SPI */
 		terminal_correct_msg();
+		/* Displays on LCD screen corresponding note in music pentagram */
 		LCD_set_pentagram_sequence(sequence_number, *FSM_Buffer[current_state].key_number);
 		/* get game's next state status */
 		current_state = FSM_Buffer[current_state].next[0];
 		/* reset seconds */
-		seconds_g = 0;
-		/* indicate that the user has won */
+		seconds_g = ZERO;
+
+		/* verify if the user has completed all the sequence */
 		if(current_state == buffer_S1)
 		{
+			/* indicate that the user has won */
 			victory_flag = TRUE;
 		}
-
+		else
+		{
+			/* indicate that the user has not won yet */
+			victory_flag = FALSE;
+		}
 	}
 	else
 	{
@@ -141,13 +103,15 @@ void handle_time_interrupt(void)
 
 	if((TRUE == victory_flag) && (FALSE == timeout_status_flag))
 	{
-		/* send victory message to SPI */	
+		/* send victory message to SPI */
 		terminal_victory_msg();
-		/* start PIT for adc sampling @ 2kHz */
+		/* Disable PIT for adc sampling @ 2kHz */
 		PIT_disable_interrupt(PIT_2);
-		/* start pit for time interrupt handler */
+		/* Disable PIT for time interrupt handler */
 		PIT_disable_interrupt(PIT_3);
+		/* Capture user initials */
 		terminal_enter_your_initials();
+		/* Store the user's time score */
 		system_user_record_capture(time_g);
 
 	}
@@ -159,20 +123,19 @@ void handle_time_interrupt(void)
 		PIT_disable_interrupt(PIT_2);
 		/* start pit for time interrupt handler */
 		PIT_disable_interrupt(PIT_3);
-		set_playerboard_flag();
+		GPIO_set_playerboard_flag();
 		terminal_enter_your_initials();
 		system_user_record_capture(time_g);
 	}
 	else
 	{
-		/* increment seconds */
-		time_g++;
-		seconds_g++;
-		update_timeout_status_flag();
+		CM_increase_time();
+		/* Handle time out and increase time */
+		CM_update_timeout_status();
 	}
 }
 
-void update_timeout_status_flag(void)
+void CM_update_timeout_status(void)
 {
 	if(TIME_LIMIT == seconds_g)
 	{
@@ -186,43 +149,26 @@ void update_timeout_status_flag(void)
 	}	
 }
 
-void victory_sound()
+uint8_t CM_get_time_g(void)
 {
-	static uint8_t index;
-	boolean_t pit_status;
-
-	pit_status = PIT_get_interrupt_flag_status(PIT_0);
-
-	if(TRUE == pit_status)
-	{
-		note_frequency(0.0001);
-		index++;
-		if(1 == index)
-		{
-			index = 0;
-			/* disable PIT #0 interrupt */
-			PIT_disable_interrupt(PIT_0);
-			/* disable PIT #1 interrupt */
-			PIT_disable_interrupt(PIT_1);
-
-			GPIO_clear_pin(GPIO_C,bit_5);
-		}
-		else
-		{
-			/* shut down buzzer */
-			GPIO_clear_pin(GPIO_C,bit_5);
-		}
-	}
-}
-
-uint8_t get_time_g()
-{
+	/* return in total time count */
 	return time_g;
 }
 
-void reset_game_timeout()
+void CM_reset_game_timeout(void)
 {
-	seconds_g = 0;
-	time_g = 0;
+	/* restart seconds count */
+	seconds_g = ZERO;
+	/* restart in total time count */
+	time_g = ZERO;
+	/* restart timeout flag */
 	timeout_status_flag = FALSE;
+}
+
+void CM_increase_time(void)
+{
+	/* total seconds */
+	time_g++;
+	/* increment sequence state seconds */
+	seconds_g++;
 }

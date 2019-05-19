@@ -60,8 +60,6 @@ void PIT1_IRQHandler()
 	/*Change status of the flag*/
 	pit_intr_status_flag.flag_PIT_1 = TRUE;
 
-	/*buzzer activation*/
-	buzzer_toogle();
 
 	/*CALLBACK*/
 	if(PIT_1_callback)

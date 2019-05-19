@@ -22,7 +22,6 @@ PIN LAYOUT:
 
 > Buzzer Port C bit 5
 
-
 Hardware Used:
 > Voltage to Frequency Converter: LM2907
 > OP-AMPS TL082/TL083

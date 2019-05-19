@@ -11,6 +11,13 @@
 #include "MK64F12.h"
 #include "bits.h"
 
+typedef enum
+{
+    ADC_0,
+	ADC_1,
+	ADC_2
+} ADC_enum_t;
+
 //typedef struct
 //{
 //
@@ -18,5 +25,6 @@
 
 void clockgating_init();
 void FTM0_clockgating(void);
+void ADC_clockgating(ADC_enum_t adc);
 
 #endif /* CLOCKGATING_H_ */

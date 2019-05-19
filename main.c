@@ -9,8 +9,6 @@
 */
 
 #include "system.h"
-#include "lcd_nokia_images.h"
-#include "simon_says.h"
 
 int main(void)
 {

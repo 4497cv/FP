@@ -10,16 +10,17 @@
 #ifndef SYSTEM_H_
 #define SYSTEM_H_
 
+#include <flextimer.h>
 #include "MK64F12.h"
 #include "terminal.h"
 #include "nvic.h"
 #include "gpio.h"
 #include "lcd_nokia.h"
 #include "spi.h"
-#include "buzzer.h"
-#include "FlexTimer.h"
 #include "i2c.h"
 #include "eeprom.h"
+#include "LM2907.h"
+#include "classic_mode.h"
 
 #define SYSTEM_CLOCK (21000000U)
 #define DELAY (1.0F)

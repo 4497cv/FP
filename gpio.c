@@ -464,38 +464,37 @@ void GPIO_data_direction_pin(gpio_port_name_t port_name, uint8_t state, uint8_t 
 	}
 }
 
-boolean_t get_start_flag(void)
+boolean_t GPIO_get_start_flag(void)
 {
 	return system_set_start_flag;
 }
 
-boolean_t get_select_flag(void)
+boolean_t GPIO_get_select_flag(void)
 {
 	return system_set_select_flag;
 }
 
-void toggle_start_flag(void)
+void GPIO_toggle_start_flag(void)
 {
 	system_set_start_flag = FALSE;
 }
 
-void toggle_select_flag(void)
+void GPIO_toggle_select_flag(void)
 {
 	system_set_select_flag = FALSE;
 }
 
-
-void set_playerboard_flag(void)
+void GPIO_set_playerboard_flag(void)
 {
 	playerboard_select = TRUE;
 }
 
-void toggle_playerboard_flag(void)
+void GPIO_toggle_playerboard_flag(void)
 {
 	playerboard_select = FALSE;
 }
 
-boolean_t get_playerboard_flag(void)
+boolean_t GPIO_get_playerboard_flag(void)
 {
 	return playerboard_select;
 }

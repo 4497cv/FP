@@ -14,8 +14,9 @@
 
 void ADC_init(void)
 {
-	gpio_pin_control_register_t config = GPIO_MUX1;
+  	gpio_pin_control_register_t config = GPIO_MUX1;
 
+    ADC_clockgating(ADC_0);
     /** Activate ADC's clock gating **/
     SIM->SCGC6 |= SIM_SCGC6_ADC0_MASK;
     /** Activate Port E clock gating **/
@@ -43,24 +44,24 @@ void ADC_init(void)
 
  uint8_t ADC_result(void)
  {
-   uint8_t adc_result;
-   /** AD12 is selected as input **/
-   ADC0->SC1[0] = ADC_SC1_ADCH(bit_17);
-   /** Iterate while conversion is not completed **/
-   while(0 == (ADC0->SC1[0] & ADC_SC1_COCO_MASK))
-   {
-	   continue;
-   }
-   /** Get ADC result **/
-   adc_result = ADC0->R[0];
-   return(adc_result);
+    uint8_t adc_result;
+    /** AD12 is selected as input **/
+    ADC0->SC1[0] = ADC_SC1_ADCH(bit_17);
+    /** Iterate while conversion is not completed **/
+    while(0 == (ADC0->SC1[0] & ADC_SC1_COCO_MASK))
+    {
+      continue;
+    }
+    /** Get ADC result **/
+    adc_result = ADC0->R[0];
+    return(adc_result);
  }
 
  uint8_t ADC_read(void)
  {
-   uint8_t temp;
-   uint8_t result;
-   temp = ADC_result();
-   result = temp;
-   return(result);
+    uint8_t temp;
+    uint8_t result;
+    temp = ADC_result();
+    result = temp;
+    return(result);
  }

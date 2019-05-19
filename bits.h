@@ -10,6 +10,9 @@
 
 #define NULL 0
 #define ZERO 0
+#define ONE 1
+#define TWO 2
+#define THREE 3
 
 /*! This definition is as a general definitions to bits in regiter or pins in the microcontroller.*/
 typedef enum 

@@ -19,7 +19,6 @@
 #define FLEX_TIMER_CLKS_2  (2U)
 #define FLEX_TIMER_CLKS_3  (3U)
 
-
 #define FLEX_TIMER_PS_1    (0U)
 #define FLEX_TIMER_PS_2    (1U)
 #define FLEX_TIMER_PS_4    (2U)
@@ -28,8 +27,6 @@
 #define FLEX_TIMER_PS_32    (5U)
 #define FLEX_TIMER_PS_64    (6U)
 #define FLEX_TIMER_PS_128    (7U)
-
-
 
 /*\brief Funct to config the FTM for the output compare so we can get the counter from the reg
  *\param[add] void
