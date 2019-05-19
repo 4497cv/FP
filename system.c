@@ -15,9 +15,9 @@ static terminal_state_t current_term_st; //current  terminal state
 static system_state_t current_system_select;
 static boolean_t system_start;
 static boolean_t system_select;
-static letter_t letter_value = SECOND_LETTER;
+static letter_t letter_value;
 static uint8_t letter_ascii;
-static uint8_t global_username[3];
+static uint8_t global_username[ID_SIZE];
 
 static FSM_terminal_t FSM_terminal[TERM_NUM_ST]=
 {
@@ -27,7 +27,7 @@ static FSM_terminal_t FSM_terminal[TERM_NUM_ST]=
 	{terminal_menu_op2,       {terminal_op1,    terminal_op2,}}
 };
 
-static FSM_system_t FSM_system[3]=
+static FSM_system_t FSM_system[SYSTEM_STATES]=
 {
 	{system_menu,			 {system_ClassicMode,  system_ClassicMode}},
 	{system_play_classic,    {system_PlayerBoard,  system_ClassicMode}},
@@ -70,14 +70,16 @@ void system_menu(void)
 			FSM_system[current_system_select].fptr();
 		}
 
-		GPIO_toggle_start_flag();  //set start flag to false
-		GPIO_toggle_select_flag(); //set select flag to false
+		/* Toggle start button */
+		GPIO_toggle_start_flag();
+		/* Toggle select button */
+		GPIO_toggle_select_flag();
 	}
 	else if(system_select)
 	{
-		/* switch to next state */
+		/* select next system state */
     	system_select_next_op();
-		/* dynamic terminal option switch */
+		/* show dynamic menu selection */
 		system_dynamic_select_handler();
 	}
 }
@@ -128,31 +130,18 @@ void system_user_record_capture(uint8_t sys_time)
 		{
 			case FIRST_LETTER:
 				letter_value = SECOND_LETTER;
-				global_username[FIRST_LETTER] = letter_ascii-1;
-				/**/
-				//eeprom_index = EEPROM_USER_ADDRESS_ONE;
-				//EEPROM_write_mem(eeprom_index,letter_ascii-1);
-				//eeprom_index++;
-				/**/
-				letter_ascii = 64;
+				global_username[FIRST_LETTER] = letter_ascii - ONE;
+				letter_ascii = ASCII_A-1;
 			break;
 			case SECOND_LETTER:
 				letter_value = THIRD_LETTER;
-				global_username[SECOND_LETTER] = letter_ascii-1;
-				/**/
-				//EEPROM_write_mem(eeprom_index,letter_ascii-1);
-				//eeprom_index++;
-				/**/
-				letter_ascii = 64;
+				global_username[SECOND_LETTER] = letter_ascii - ONE;
+				letter_ascii = ASCII_A-1;
 			break;
 			case THIRD_LETTER:
 				letter_value = SCORE_SAVED;
-				global_username[THIRD_LETTER] = letter_ascii-1;
-				/**/
-				//EEPROM_write_mem(eeprom_index,letter_ascii-1);
-				//eeprom_index++;
-				/**/
-				letter_ascii = 64;
+				global_username[THIRD_LETTER] = letter_ascii - ONE;
+				letter_ascii = ASCII_A-1;
 			case SCORE_SAVED:
 				terminal_score_saved();
 				eeprom_store_record(global_username, sys_time);
@@ -165,12 +154,12 @@ void system_user_record_capture(uint8_t sys_time)
 	}
 
 
-	if((letter_ascii >= 64) && (letter_ascii < 90))
+	if(((ASCII_A) <= letter_ascii) && ((ASCII_Z) > letter_ascii))
 	{
 		letter_ascii++;
 	}else
 	{
-		letter_ascii = 64;
+		letter_ascii = ASCII_A;
 	}
 
 	GPIO_toggle_start_flag();  //set start flag to false
@@ -202,7 +191,7 @@ void system_dynamic_select_handler(void)
 
 void system_select_next_op()
 {
-	current_system_select = FSM_system[current_system_select].next[0];
+	current_system_select = FSM_system[current_system_select].next[ZERO];
 }
 
 void system_init()
@@ -311,20 +300,19 @@ void system_init()
 	current_term_st = terminal_start;
 	FSM_terminal[current_term_st].fptr(); //invoke state's related function
 
-	current_term_st = FSM_terminal[current_term_st].next[0]; //set initial terminal state (display menu)
+	current_term_st = FSM_terminal[current_term_st].next[ZERO]; //set initial terminal state (display menu)
 	current_system_select = system_Menu; //set state pointer to classic mode
-	letter_ascii = 64;
-	letter_value = FIRST_LETTER;
+	CM_reset_game();
 }
 
 void reset_menu()
 {
 	FSM_terminal[terminal_menu].fptr();
 	current_system_select = system_Menu; //set state pointer to classic mode
-	letter_ascii = 64;
+	letter_ascii = ASCII_A-1;
 	letter_value = FIRST_LETTER;
 	GPIO_toggle_playerboard_flag();
-	CM_reset_game_timeout();
+	CM_reset_game();
 }
 
 

@@ -8,15 +8,15 @@
 
 #include "classic_mode.h"
 
-static uint8_t buffer_sequence[BUFFER_SIZE] = {0};
+static uint8_t buffer_sequence[BUFFER_SIZE];
 static boolean_t sequence_complete_g;
 static uint8_t sequence_number;
-static boolean_t timeout_status_flag = FALSE;
-static NoteBuffer_t current_state = buffer_S1;
-static volatile uint8_t seconds_g = 0;
-static volatile uint8_t time_g = 0;
+static boolean_t timeout_status_flag;
+static NoteBuffer_t current_state;
+static volatile uint8_t seconds_g;
+static volatile uint8_t time_g;
 
-sequence_map_t sequence_map[SEQUENCE_SIZE] =
+static const sequence_map_t sequence_map[SEQUENCE_SIZE] =
 {
 	{SEQUENCE_ZERO,		{C, D, E, G, A}},
 	{SEQUENCE_ONE,		{D, G, A, C, C}},
@@ -28,13 +28,13 @@ sequence_map_t sequence_map[SEQUENCE_SIZE] =
 	{SEQUENCE_SEVEN,	{C, A, G, A, D}}
 };
 
-static FSM_SS_t FSM_Buffer[BUFFER_SIZE]=
+static const FSM_SS_t FSM_Buffer[BUFFER_SIZE]=
 {
-	{&buffer_sequence[0],   {buffer_S2,  buffer_S3, buffer_S4, buffer_S5, buffer_S1}},
-	{&buffer_sequence[1],   {buffer_S3,  buffer_S4, buffer_S5, buffer_S1, buffer_S2}},
-	{&buffer_sequence[2],   {buffer_S4,  buffer_S5, buffer_S1, buffer_S2, buffer_S3}},
-	{&buffer_sequence[3],   {buffer_S5,  buffer_S1, buffer_S2, buffer_S3, buffer_S4}},
-	{&buffer_sequence[4],   {buffer_S1,  buffer_S2, buffer_S3, buffer_S4, buffer_S5}}
+	{&buffer_sequence[ZERO],   {buffer_S2,  buffer_S3, buffer_S4, buffer_S5, buffer_S1}},
+	{&buffer_sequence[ONE],    {buffer_S3,  buffer_S4, buffer_S5, buffer_S1, buffer_S2}},
+	{&buffer_sequence[TWO],    {buffer_S4,  buffer_S5, buffer_S1, buffer_S2, buffer_S3}},
+	{&buffer_sequence[THREE],  {buffer_S5,  buffer_S1, buffer_S2, buffer_S3, buffer_S4}},
+	{&buffer_sequence[FOUR],   {buffer_S1,  buffer_S2, buffer_S3, buffer_S4, buffer_S5}}
 };
 
 void CM_generate_sequence_buffer(void)
@@ -79,7 +79,7 @@ void CM_handle_time_interrupt(void)
 		/* Displays on LCD screen corresponding note in music pentagram */
 		LCD_set_pentagram_sequence(sequence_number, *FSM_Buffer[current_state].key_number);
 		/* get game's next state status */
-		current_state = FSM_Buffer[current_state].next[0];
+		current_state = FSM_Buffer[current_state].next[ZERO];
 		/* reset seconds */
 		seconds_g = ZERO;
 
@@ -129,14 +129,16 @@ void CM_handle_time_interrupt(void)
 	}
 	else
 	{
+		/* increase current seconds and total time */
 		CM_increase_time();
-		/* Handle time out and increase time */
+		/* Verify if a time out has ocurred */
 		CM_update_timeout_status();
 	}
 }
 
 void CM_update_timeout_status(void)
 {
+	/* Verify if the current seconds has reached the time limit */
 	if(TIME_LIMIT == seconds_g)
 	{
 		/* indicate time out if it reached its limit */
@@ -155,14 +157,23 @@ uint8_t CM_get_time_g(void)
 	return time_g;
 }
 
-void CM_reset_game_timeout(void)
+void CM_reset_game(void)
 {
+	uint8_t i;
+
 	/* restart seconds count */
 	seconds_g = ZERO;
 	/* restart in total time count */
 	time_g = ZERO;
 	/* restart timeout flag */
 	timeout_status_flag = FALSE;
+	/* Set initial state */
+	current_state = buffer_S1;
+
+	for(i = ZERO; BUFFER_SIZE > i; i++)
+	{
+		buffer_sequence[i] = ZERO;
+	}
 }
 
 void CM_increase_time(void)

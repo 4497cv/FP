@@ -17,8 +17,7 @@ void ADC_init(void)
   	gpio_pin_control_register_t config = GPIO_MUX1;
 
     ADC_clockgating(ADC_0);
-    /** Activate ADC's clock gating **/
-    SIM->SCGC6 |= SIM_SCGC6_ADC0_MASK;
+
     /** Activate Port E clock gating **/
     GPIO_clock_gating(GPIO_E);
     /** Configure PORT_E pin 24 **/

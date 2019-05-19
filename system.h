@@ -30,6 +30,8 @@
 #define EEPROM_USER_ADDRESS_THREE 0x12U
 
 #define SYS_NUM_ST 6
+#define SYSTEM_STATES 3
+#define ID_SIZE 3
 
 typedef struct
 {
