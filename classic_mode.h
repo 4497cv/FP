@@ -18,7 +18,7 @@
 
 #define SEQUENCE_SIZE  8
 #define BUFFER_SIZE    5
-#define TIME_LIMIT     15
+#define TIME_LIMIT     30
 
 typedef enum{DO,RE,MI,FA,SOL,LA,SI} string_note_t;
 

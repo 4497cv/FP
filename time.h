@@ -87,12 +87,7 @@
 #define RS_MASK     (0x0F)
 #define BIT8_MASK   (0x10)
 
-#define HOUR_CAP    0
-#define MIN_CAP     1
-#define SEC_CAP     2
-#define DAY_CAP     3
-#define MONTH_CAP   4
-#define YEAR_CAP    5
+#define MINUTE 60
 
 typedef enum
 {

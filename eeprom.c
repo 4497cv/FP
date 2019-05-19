@@ -284,7 +284,6 @@ void eeprom_store_record(uint8_t username[3], uint8_t time_g)
 	uint8_t index;
 	uint8_t index_user_addr[NUM_USERS] = {0};
 	float min_fp;
-	float sec_fp;
 	uint8_t min;
 	uint8_t sec;
 
@@ -295,10 +294,17 @@ void eeprom_store_record(uint8_t username[3], uint8_t time_g)
 	{
 		sec = time_g;
 	}
+	else if(ONE == min)
+	{
+		sec = time_g - (ONE * MINUTE);
+	}
+	else if(TWO == min)
+	{
+		sec = time_g - (TWO * MINUTE);
+	}
 	else
 	{
-		sec_fp = (min_fp - min) * 100;
-		sec = (uint8_t) sec_fp;
+
 	}
 
 #ifndef DEBUG

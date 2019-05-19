@@ -37,7 +37,7 @@ void LM2907_get_current_note(void)
 	/* conversion to 3.3 V reference */
 	voltage_val = (ANALOG_LIMIT*digital_val)/DIGITAL_LIMIT;
 
-	index = 0;
+	index = ZERO;
 
 	do
 	{
@@ -46,18 +46,18 @@ void LM2907_get_current_note(void)
 		index++;
 
 		voltage_val = voltage_val - temp;
-		voltage_val = voltage_val * 10;
+		voltage_val = voltage_val * DECIMAL_SHIFT;
 
 		temp = (uint8_t) voltage_val;
 		voltage_string[index] = temp;
 		index++;
 
 		voltage_val = voltage_val - temp;
-		voltage_val = voltage_val * 10;
+		voltage_val = voltage_val * DECIMAL_SHIFT;
 
 		temp = (uint8_t) voltage_val;
 		voltage_string[index] = temp;
-	}while(index < 5);
+	}while(STRING_MAX > index);
 
 	/* get current key note*/
 	key = LM2907_decode_voltage(voltage_string[ONE], voltage_string[TWO], voltage_string[THREE]);
@@ -83,6 +83,10 @@ uint8_t LM2907_decode_voltage(uint8_t voltage_string1, uint8_t voltage_string2,u
 		{
 			index = i;
 			notfound_flag = FALSE;
+		}
+		else
+		{
+			/* Do nothing */
 		}
 	}
 

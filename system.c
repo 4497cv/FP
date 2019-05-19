@@ -262,9 +262,8 @@ void system_init()
 	/* Activating PIT */
 	PIT_enable();
 	/* Set the delay for the pit_1 */
-	PIT_delay(PIT_0, SYSTEM_CLOCK, DELAY);
-	PIT_delay(PIT_2, SYSTEM_CLOCK, 0.1F);   // @ 2 kHz
-	PIT_delay(PIT_3, SYSTEM_CLOCK, DELAY);  // @ 1 Hz
+	PIT_delay(PIT_2, SYSTEM_CLOCK, SAMPLING_RATE);   // @ 10 Hz
+	PIT_delay(PIT_3, SYSTEM_CLOCK, BPS_RATE);  // @ 1 Hz
 	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 	/* ~~~~~~~~  ADC configuration ~~~~~~~~ */
@@ -272,7 +271,7 @@ void system_init()
 	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 	/* ~~~~~~~~  I2C configuration ~~~~~~~~ */
-	I2C_init(I2C_0,SYSTEM_CLOCK,BD_9600);
+	I2C_init(I2C_0, SYSTEM_CLOCK, BD_9600);
 	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 	/**Sets the threshold for interrupts, if the interrupt has higher priority constant that the BASEPRI, the interrupt will not be attended*/
@@ -282,9 +281,6 @@ void system_init()
 	/* Set PORT C interrupt priority */
 	NVIC_enable_interrupt_and_priotity(PORTC_IRQ, PRIORITY_5);
 	/*Activating the ISR for the PIT and set the priority*/
-	NVIC_enable_interrupt_and_priotity(PIT_CH0_IRQ, PRIORITY_4);
-	/*Activating the ISR for the PIT and set the priority*/
-	NVIC_enable_interrupt_and_priotity(PIT_CH1_IRQ, PRIORITY_5);
 	NVIC_enable_interrupt_and_priotity(PIT_CH2_IRQ, PRIORITY_3);
 	/*Activating the ISR for the PIT and set the priority*/
 	NVIC_enable_interrupt_and_priotity(PIT_CH3_IRQ, PRIORITY_2);

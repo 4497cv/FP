@@ -15,18 +15,18 @@
 #include "i2c.h"
 #include "stdint.h"
 #include "delay.h"
+#include "time.h"
 
 #define CLEAR 0x0000
 
-#define EEPROM_WRITE_CONTROL 0xA0
-#define EEPROM_READ_CONTROL 0xA1
+#define EEPROM_WRITE_CONTROL (0xA0U)
+#define EEPROM_READ_CONTROL  (0xA1U)
 #define NUM_USERS 4
 #define EEPROM_BYTES 32
 #define EEPROM_SIZE 0x00FF
 #define EBUFFER_SIZE 7
-
-#define PAGE_SIZE 0x64
-
+#define USER_SPACE 6
+#define PAGE_SIZE (0x64U)
 #define EEPROM_DELAY 6500
 
 typedef struct

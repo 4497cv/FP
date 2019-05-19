@@ -23,8 +23,8 @@
 #include "classic_mode.h"
 
 #define SYSTEM_CLOCK (21000000U)
-#define DELAY (1.0F)
-
+#define BPS_RATE (1.0F)
+#define SAMPLING_RATE (0.1F)
 #define EEPROM_USER_ADDRESS_ONE   0x00U
 #define EEPROM_USER_ADDRESS_TWO   0x06U
 #define EEPROM_USER_ADDRESS_THREE 0x12U
