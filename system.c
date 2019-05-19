@@ -168,6 +168,7 @@ void system_user_record_capture(uint8_t sys_time)
 
 void system_player_board()
 {
+	EEPROM_read_mem_page();
 	terminal_user_score();
 }
 

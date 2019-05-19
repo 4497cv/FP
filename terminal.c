@@ -162,42 +162,34 @@ void terminal_user_score()
 	uint8_t i;
 	uint8_t spi_index = 0;
 
-	for(i = 1; i<7;i++)
+	for(i = 0; EBUFFER_SIZE > i ; i++)
 	{
 		buffer_t[i] = get_buffer(i);
 	}
 
 	LCD_nokia_clear();
 	LCD_nokia_goto_xy(0,1);
-	LCD_nokia_send_string("Score");
-	LCD_nokia_goto_xy(0,2);
-
-	/*Send individual chars for simplicity*/
-	LCD_nokia_send_string("USER:");
-	LCD_nokia_goto_xy(spi_index,3);
-	spi_index = spi_index + SPI_OFFSET;
+	LCD_nokia_send_string("1. ");
+	LCD_nokia_goto_xy(15, 1);
+	LCD_nokia_send_char(buffer_t[1]);
+	LCD_nokia_goto_xy(25, 1);
 	LCD_nokia_send_char(buffer_t[2]);
-	LCD_nokia_goto_xy(spi_index,3);
-	spi_index = spi_index + SPI_OFFSET;
+	LCD_nokia_goto_xy(35, 1);
 	LCD_nokia_send_char(buffer_t[3]);
-	LCD_nokia_goto_xy(spi_index,3);
-	spi_index = spi_index + SPI_OFFSET;
-	LCD_nokia_send_char(buffer_t[4]);
-	/*Send Score*/
-	/*rst index*/
-	spi_index = 0;
-	LCD_nokia_goto_xy(0,4);
-	/*Send points taken*/
-	LCD_nokia_send_string("Points:");
-	LCD_nokia_goto_xy(spi_index,5);
-	spi_index = spi_index + SPI_OFFSET;
-	LCD_nokia_send_char(buffer_t[5]+ASCII_DECODE);
-/**/
-	spi_index = spi_index + SPI_OFFSET;
-	LCD_nokia_goto_xy(spi_index,5);
-	LCD_nokia_send_string(":");
-/**/
-	spi_index = spi_index + SPI_OFFSET;
-	LCD_nokia_goto_xy(spi_index,5);
-	LCD_nokia_send_char(buffer_t[6]+ASCII_DECODE);
+
+	LCD_nokia_goto_xy(50, 1);
+	get_table_value_dec2hex(buffer_t[4]);
+	LCD_nokia_send_char(ASCII_DECODE + get_global_unit());
+
+	LCD_nokia_goto_xy(57, 1);
+	get_table_value_dec2hex(buffer_t[4]);
+	LCD_nokia_send_char(ASCII_DECODE + get_global_decimal());
+	LCD_nokia_goto_xy(65, 1);
+	LCD_nokia_send_char(':');
+	LCD_nokia_goto_xy(70, 1);
+	get_table_value_dec2hex(buffer_t[5]);
+	LCD_nokia_send_char(ASCII_DECODE + get_global_unit());
+	LCD_nokia_goto_xy(77, 1);
+	get_table_value_dec2hex(buffer_t[5]);
+	LCD_nokia_send_char(ASCII_DECODE + get_global_decimal());
 }

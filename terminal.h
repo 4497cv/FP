@@ -16,6 +16,7 @@
 #include "lcd_nokia.h"
 #include "LCD_nokia_images.h"
 #include "eeprom.h"
+#include "time.h"
 
 #define TERM_NUM_ST     6U
 #define SCREEN_LIMIT    84U

@@ -12,115 +12,96 @@
 static uint8_t eeprom_storage[EEPROM_BYTES] = {0}; //four users 32 bytes in total; 8 bytes per user.
 static boolean_t user_available[4] = {FALSE};
 static uint8_t buffer[7] = {0};
+static uint8_t High_Address_g;
+static uint8_t Low_Address_g;
+static uint8_t data_g;
+static uint8_t write_control = (0xA0);
+static uint8_t read_control = (EEPROM_READ_CONTROL);
+
+static const EEPROM_state_t FSM_EEPROM_WR[4]=
+{
+	{I2C_TX,   	 &write_control,  I2C_tx_rx_mode, I2C_write_byte, I2C_wait, I2C_get_ack, I2C_start, I2C_stop,  {EEPROM_I2C_S1, EEPROM_I2C_S2, EEPROM_I2C_S3, EEPROM_I2C_S0}}, //WRITE CONTROL STATE
+    {I2C_TX,    &High_Address_g,  I2C_tx_rx_mode, I2C_write_byte, I2C_wait, I2C_get_ack, I2C_start, I2C_stop,  {EEPROM_I2C_S2, EEPROM_I2C_S3, EEPROM_I2C_S0, EEPROM_I2C_S1}}, //SET ADDRESS STATE
+	{I2C_TX,     &Low_Address_g,  I2C_tx_rx_mode, I2C_write_byte, I2C_wait, I2C_get_ack, I2C_start, I2C_stop,  {EEPROM_I2C_S3, EEPROM_I2C_S0, EEPROM_I2C_S1, EEPROM_I2C_S2}}, //WRITE DATA STATE
+	{I2C_TX,  		    &data_g,  I2C_tx_rx_mode, I2C_write_byte, I2C_wait, I2C_get_ack, I2C_start, I2C_stop,  {EEPROM_I2C_S0, EEPROM_I2C_S1, EEPROM_I2C_S2, EEPROM_I2C_S3}} //WRITE DATA STATE
+};
+
+static const EEPROM_state_t FSM_EEPROM_RD[4]=
+{
+	{I2C_TX,   	 &write_control,  I2C_tx_rx_mode, I2C_write_byte, I2C_wait, I2C_get_ack, I2C_start, I2C_stop,  {EEPROM_I2C_S1, EEPROM_I2C_S2, EEPROM_I2C_S3, EEPROM_I2C_S0}}, //WRITE CONTROL STATE
+    {I2C_TX,    &High_Address_g,  I2C_tx_rx_mode, I2C_write_byte, I2C_wait, I2C_get_ack, I2C_start, I2C_stop,  {EEPROM_I2C_S2, EEPROM_I2C_S3, EEPROM_I2C_S0, EEPROM_I2C_S1}}, //SET ADDRESS STATE
+	{I2C_TX,     &Low_Address_g,  I2C_tx_rx_mode, I2C_write_byte, I2C_wait, I2C_get_ack, I2C_start, I2C_stop,  {EEPROM_I2C_S3, EEPROM_I2C_S0, EEPROM_I2C_S1, EEPROM_I2C_S2}}, //WRITE DATA STATE
+	{I2C_TX,  	  &read_control,  I2C_tx_rx_mode, I2C_write_byte, I2C_wait, I2C_get_ack, I2C_start, I2C_stop,  {EEPROM_I2C_S0, EEPROM_I2C_S1, EEPROM_I2C_S2, EEPROM_I2C_S3}} //WRITE DATA STATE
+};
+
+static EEPROM_state_t FSM_EEPROM_BUFFER[EBUFFER_SIZE]=
+{
+    {I2C_TX,   &buffer[0],  I2C_tx_rx_mode, I2C_write_byte, I2C_wait, I2C_get_ack, I2C_start, I2C_stop,  {EEPROM_I2C_S1, EEPROM_I2C_S2, EEPROM_I2C_S3, EEPROM_I2C_S4, EEPROM_I2C_S5, EEPROM_I2C_S6, EEPROM_I2C_S0, EEPROM_I2C_S1}},
+	{I2C_TX,   &buffer[1],  I2C_tx_rx_mode, I2C_write_byte, I2C_wait, I2C_get_ack, I2C_start, I2C_stop,  {EEPROM_I2C_S2, EEPROM_I2C_S3, EEPROM_I2C_S4, EEPROM_I2C_S5, EEPROM_I2C_S6, EEPROM_I2C_S0, EEPROM_I2C_S1, EEPROM_I2C_S2}},
+	{I2C_TX,   &buffer[2],  I2C_tx_rx_mode, I2C_write_byte, I2C_wait, I2C_get_ack, I2C_start, I2C_stop,  {EEPROM_I2C_S3, EEPROM_I2C_S4, EEPROM_I2C_S5, EEPROM_I2C_S6, EEPROM_I2C_S0, EEPROM_I2C_S1, EEPROM_I2C_S2, EEPROM_I2C_S3}},
+	{I2C_TX,   &buffer[3],  I2C_tx_rx_mode, I2C_write_byte, I2C_wait, I2C_get_ack, I2C_start, I2C_stop,  {EEPROM_I2C_S4, EEPROM_I2C_S5, EEPROM_I2C_S6, EEPROM_I2C_S0, EEPROM_I2C_S1, EEPROM_I2C_S2, EEPROM_I2C_S3, EEPROM_I2C_S4}},
+	{I2C_TX,   &buffer[4],  I2C_tx_rx_mode, I2C_write_byte, I2C_wait, I2C_get_ack, I2C_start, I2C_stop,  {EEPROM_I2C_S5, EEPROM_I2C_S6, EEPROM_I2C_S0, EEPROM_I2C_S1, EEPROM_I2C_S2, EEPROM_I2C_S3, EEPROM_I2C_S4, EEPROM_I2C_S5}},
+	{I2C_TX,   &buffer[5],  I2C_tx_rx_mode, I2C_write_byte, I2C_wait, I2C_get_ack, I2C_start, I2C_stop,  {EEPROM_I2C_S6, EEPROM_I2C_S0, EEPROM_I2C_S1, EEPROM_I2C_S2, EEPROM_I2C_S3, EEPROM_I2C_S4, EEPROM_I2C_S5, EEPROM_I2C_S6}},
+	{I2C_TX,   &buffer[6],  I2C_tx_rx_mode, I2C_write_byte, I2C_wait, I2C_get_ack, I2C_start, I2C_stop,  {EEPROM_I2C_S0, EEPROM_I2C_S1, EEPROM_I2C_S2, EEPROM_I2C_S3, EEPROM_I2C_S4, EEPROM_I2C_S5, EEPROM_I2C_S6, EEPROM_I2C_S7}},
+};
 
 void EEPROM_write_mem(uint16_t address, uint8_t data)
 {
-	/*Need to separate address to High and Low address*/
-	/*high address*/
-	uint8_t Haddr = address >> bit_8;
-	/*low address*/
-	uint8_t Laddr =  address;
+	uint8_t	current_state;
+	uint8_t tx_or_rx;
+	uint8_t writebyte;
 
-	/*Set as Tx*/
-	I2C_tx_rx_mode(I2C_TX);
-	/*Start bit*/
-	I2C_start();
-	/*Send the RTC Address to the register*/
-	I2C_write_byte(EEPROM_WRITE_CONTROL); /*1010/Direccion fisica(A2/A1/A0)*/
-	/*Check if I2C is busy*/
-	I2C_wait();
-	/*Recevie the Acknowledge*/
-	I2C_get_ack();
-	/*delay*/
-	//EEPROM_delay(EEPROM_DELAY);
+	/*set high address*/
+	High_Address_g = (address >> bit_8);
+	/*set low address*/
+	Low_Address_g =  address;
+	/* set data */
+	data_g = data;
 
-	/*Register address*/
-	I2C_write_byte(Haddr); /*Address = data*/
-	/*Check if I2C is busy*/
-	I2C_wait();
-	/*Recevie the Acknowledge*/
-	I2C_get_ack();
-	/*delay*/
-	//EEPROM_delay(EEPROM_DELAY);
+	current_state = EEPROM_I2C_S0;
 
-	/*Register address*/
-	I2C_write_byte(Laddr); /*Address = data*/
-	/*Check if I2C is busy*/
-	I2C_wait();
-	/*Recevie the Acknowledge*/
-	I2C_get_ack();
-	/*delay*/
-	//EEPROM_delay(EEPROM_DELAY);
+	tx_or_rx = FSM_EEPROM_WR[current_state].Transmit_Receive;
+	FSM_EEPROM_WR[current_state].fptrTxRx(tx_or_rx); //Enable transmission
+	FSM_EEPROM_WR[current_state].start();
 
-	/*Register address*/
-	I2C_write_byte(data); /*Address = data*/
-	/*Check if I2C is busy*/
-	I2C_wait();
-	/*Recevie the Acknowledge*/
-	I2C_get_ack();
-	/*delay*/
-	//EEPROM_delay(EEPROM_DELAY);
+	do
+	{
+		writebyte = *FSM_EEPROM_WR[current_state].writebyte;		//Retrieve current writebyte value
+		FSM_EEPROM_WR[current_state].fptrWrite(writebyte);		//Send writebyte current value
+		FSM_EEPROM_WR[current_state].fptrWaitTransfer();		//wait until transfer is complete
+		FSM_EEPROM_WR[current_state].fptrgetAck();				//receive acknowledge
+		current_state = FSM_EEPROM_WR[current_state].next[0];	//get next state
+	}while(EEPROM_I2C_S0 != current_state);
 
-	/*Send the stop signal*/
-	I2C_stop();
-
-	//I2C_repeated_start();
+	FSM_EEPROM_WR[current_state].stop(); //stop transmission
 }
 
 int8_t EEPROM_read_mem(uint16_t address)
 {
-	int8_t data;
-	/*Need to separate address to High and Low address*/
-	/*high address*/
-	uint8_t Haddr = address >> bit_8;
-	/*low address*/
-	uint8_t Laddr = address;
+	uint8_t	current_state;
+	uint8_t tx_or_rx;
+	uint8_t writebyte;
+	uint8_t data;
 
-	/*Change I2C module to Tx mode*/
-	I2C_tx_rx_mode(I2C_TX);
-	/*Start bit*/
-	I2C_start();
-	/*Send the RTC Address to the register*/
-	I2C_write_byte(EEPROM_WRITE_CONTROL); /*1010/Direccion fisica(A2/A1/A0)*/
-	/*Check if I2C is busy*/
-	I2C_wait();
-	/*Recevie the Acknowledge*/
-	I2C_get_ack();
-	/*delay*/
-	EEPROM_delay(EEPROM_DELAY);
+	/*set high address*/
+	High_Address_g = (address >> bit_8);
+	/*set low address*/
+	Low_Address_g =  address;
 
-	/*Register address*/
-	I2C_write_byte(Haddr); /*Address = data*/
-	/*Check if I2C is busy*/
-	I2C_wait();
-	/*Recevie the Acknowledge*/
-	I2C_get_ack();
-	/*delay*/
-	EEPROM_delay(EEPROM_DELAY);
+	current_state = EEPROM_I2C_S0;
 
-	/*Register address*/
-	I2C_write_byte(Laddr); /*Address = data*/
-	/*Check if I2C is busy*/
-	I2C_wait();
-	/*Recevie the Acknowledge*/
-	I2C_get_ack();
-	/*delay*/
-	EEPROM_delay(EEPROM_DELAY);
+	tx_or_rx = FSM_EEPROM_RD[current_state].Transmit_Receive;
+	FSM_EEPROM_RD[current_state].fptrTxRx(tx_or_rx); //Enable transmission
+	FSM_EEPROM_RD[current_state].start();
 
-	/*Send the start bit signal again so we can send now the data to read*/
-	I2C_repeated_start();
-
-	/*Send the RTC Address to the register*/
-	I2C_write_byte(EEPROM_READ_CONTROL); /*1010/Direccion fisica(A2/A1/A0)*/
-	/*Check if I2C is busy*/
-	I2C_wait();
-	/*Recevie the Acknowledge*/
-	I2C_get_ack();
-	/*delay*/
-	EEPROM_delay(EEPROM_DELAY);
-
-	/*Change I2C module to Rx mode*/
-	I2C_tx_rx_mode(I2C_RX);
+	do
+	{
+		writebyte = *FSM_EEPROM_RD[current_state].writebyte;		//Retrieve current writebyte value
+		FSM_EEPROM_RD[current_state].fptrWrite(writebyte);		//Send writebyte current value
+		FSM_EEPROM_RD[current_state].fptrWaitTransfer();		//wait until transfer is complete
+		FSM_EEPROM_RD[current_state].fptrgetAck();				//receive acknowledge
+		current_state = FSM_EEPROM_RD[current_state].next[0];	//get next state
+	}while(EEPROM_I2C_S0 != current_state);
 
 	/*data get the value that's in the I2C_D register*/
 	data = I2C_read_byte();
@@ -128,11 +109,8 @@ int8_t EEPROM_read_mem(uint16_t address)
 	I2C_wait();
 	/*Generate ~Acknowledge*/
 	I2C_nack();
-	/*delay*/
-	EEPROM_delay(EEPROM_DELAY);
 
-	/*Send the stop signal*/
-	I2C_stop();
+	FSM_EEPROM_RD[current_state].stop(); //stop transmission
 
 	/*data get the value that's in the I2C_D register*/
 	data = I2C_read_byte();
@@ -333,21 +311,21 @@ void eeprom_store_record(uint8_t username[3], uint8_t time_g)
 	index = index*6;
 
 	/*Store in buffer and eeprom user is writen*/
-	eeprom_storage[index] = 1;
-	EEPROM_write_mem(index, 1);
+	eeprom_storage[index] = ONE;
+	EEPROM_write_mem(index, ONE);
 	index++;
 	delay(65000);
 	/*Store in buffer and eeprom the user tag*/
-	eeprom_storage[index] = username[0];
-	EEPROM_write_mem(index, username[0]);
+	eeprom_storage[index] = username[ZERO];
+	EEPROM_write_mem(index, username[ZERO]);
 	index++;
 	delay(65000);
-	eeprom_storage[index] = username[1];
-	EEPROM_write_mem(index, username[1]);
+	eeprom_storage[index] = username[ONE];
+	EEPROM_write_mem(index, username[ONE]);
 	index++;
 	delay(65000);
-	eeprom_storage[index] = username[2];
-	EEPROM_write_mem(index, username[2]);
+	eeprom_storage[index] = username[TWO];
+	EEPROM_write_mem(index, username[TWO]);
 	index++;
 	delay(65000);
 	/*Store in buffer and eeprom the score time*/
@@ -427,8 +405,5 @@ void eeprom_read_record()
 
 uint8_t get_buffer(uint8_t index)
 {
-
-	EEPROM_read_mem_page();
-
 	return buffer[index];
 }

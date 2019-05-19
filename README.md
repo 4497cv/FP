@@ -1,4 +1,4 @@
-﻿# FINAL PROJECT: ABSOLUTE PITCH
+﻿# FINAL PROJECT: GUITAR GUESSING GAME
 \authors: César Villarreal Hernández         @4497cv,
 	      Luís Fernando Rodríguez Gutiérrez  @LProtox,
 

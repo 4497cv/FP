@@ -23,6 +23,7 @@
 #define NUM_USERS 4
 #define EEPROM_BYTES 32
 #define EEPROM_SIZE 0x00FF
+#define EBUFFER_SIZE 7
 
 #define PAGE_SIZE 0x64
 
@@ -31,7 +32,7 @@
 typedef struct
 {
 	uint8_t Transmit_Receive;
-	uint8_t writebyte;
+	uint8_t *writebyte;
 	void(*fptrTxRx)(uint8_t tx_or_rx);
 	void (*fptrWrite)(uint8_t data);
 	void (*fptrWaitTransfer)(void);
@@ -41,6 +42,18 @@ typedef struct
 	uint8_t next[4];
 } EEPROM_state_t;
 
+typedef enum
+{
+	EEPROM_I2C_S0,
+	EEPROM_I2C_S1,
+	EEPROM_I2C_S2,
+	EEPROM_I2C_S3,
+	EEPROM_I2C_S4,
+	EEPROM_I2C_S5,
+	EEPROM_I2C_S6,
+	EEPROM_I2C_S7,
+	EEPROM_I2C_S8
+} EEPROM_enum_t;
 
 /*\brief Funct to write in the address wirtten in the param via I2C
  *\param[add] Address
